@@ -53,10 +53,22 @@ function EventMob()
 end
 
 local Main = Window:AddTab('Main');
-local LSC1 = Main:AddLeftGroupbox("Farm");
+local LSCT = Main:AddRightTabbox('LeftTabs');
+local LSC1 = LSCT:AddTab("Main");
+local LSC2 = LSCT:AddTab("Event");
 local RSCT = Main:AddRightTabbox('RightTabs');
 local RSC1 = RSCT:AddTab("Auto");
 local RSC2 = RSCT:AddTab('Webhook');
+
+function swing()
+    local fabledClass_type = fabledClass_type or "Mage"
+
+    if fabledClass_type == 'Mage' then
+        game:GetService("ReplicatedStorage"):WaitForChild("Bolt"):FireServer()
+    else
+        game:GetService("ReplicatedStorage"):WaitForChild("Swing"):FireServer()
+    end
+end
 
 function DodgeHitboxes()
     local used = {};
@@ -164,17 +176,59 @@ local autoMob = LSC1:AddToggle('autoMob', {
                         tweenTo(pos, true)
                     end
                 else
-                    tweenTo(target:GetModelCFrame() * CFrame.new(0, 0, 5), true)
+                    tweenTo(target:GetModelCFrame() * CFrame.new(0, 0, -5), true)
                     hrp.CFrame = CFrame.lookAt(hrp.Position, target:GetModelCFrame().Position)
                 end
 
-                game:GetService("ReplicatedStorage"):WaitForChild("Swing"):FireServer()
+                swing()
             end
         end
 
         resetTween()
     end
 });
+
+LSC1:AddDropdown('classType', {
+    Values = { 'Mage', 'Warrior' },
+    Default = 1,   -- number index of the value / string
+    Multi = false, -- true / false, allows multiple choices to be selected
+
+    Text = 'Class Type',
+
+    Callback = function(Value)
+        pcall(function()
+            getgenv().fabledClass_type = Value;
+        end)
+    end
+})
+
+local autoAbility = LSC1:AddToggle('autoAbility', {
+    Text = 'Auto Use Q/E',
+    Default = false,
+
+    Callback = function(Value)
+        getgenv().autoAbility = Value
+
+        while autoAbility do
+            Heartbeat:Wait()
+            if not eDB then
+                game:GetService("ReplicatedStorage"):WaitForChild("useSpell"):FireServer("E")
+                wait(.5)
+                eDB = true;
+                qDB = false;
+            elseif eDB and not qDB then
+                game:GetService("ReplicatedStorage"):WaitForChild("useSpell"):FireServer("Q")
+                wait(.5)
+                eDB = false;
+                qDB = true;
+            else
+                eDB = false;
+                qDB = false;
+            end
+        end
+    end
+});
+
 
 function getDis(pos)
     local dis = 0;
@@ -193,7 +247,7 @@ end
 
 local eDB = false;
 
-local autoEvent = LSC1:AddToggle('autoEvent', {
+local autoEvent = LSC2:AddToggle('autoEvent', {
     Text = 'Auto Farm Event',
     Default = false,
 
@@ -264,7 +318,7 @@ local autoEvent = LSC1:AddToggle('autoEvent', {
                     end
                 end)
 
-                game:GetService("ReplicatedStorage"):WaitForChild("Bolt"):FireServer()
+                swing()
             end
         end
 
