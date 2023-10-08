@@ -30,14 +30,14 @@ getgenv().Heartbeat = RunService.Heartbeat
 
 -- Library
 
-getgenv().repo = 'https://raw.githubusercontent.com/nuhuhs/LinoriaTheme/main/'
+repo = 'https://raw.githubusercontent.com/nuhuhs/LinoriaTheme/main/'
 
-getgenv().Library = loadstring(game:HttpGet(repo .. 'Main'))()
-getgenv().ThemeManager = loadstring(game:HttpGet(repo .. 'ThemeManager'))()
-getgenv().SaveManager = loadstring(game:HttpGet(repo .. 'SaveManager'))()
+Library = loadstring(game:HttpGet(repo .. 'Main'))()
+ThemeManager = loadstring(game:HttpGet(repo .. 'ThemeManager'))()
+SaveManager = loadstring(game:HttpGet(repo .. 'SaveManager'))()
 
 getgenv().gameName = getgenv().gameName or 'Universal'
-getgenv().Window = nil;
+Window = nil;
 
 function CreatePolaris(gn)
     local gn = gn or gameName or "Universal";
@@ -79,7 +79,7 @@ function tweenTo(pos, noFall, offset)
         end)
     end
 
-    spawn(function()
+    spawn(function ()
         for i, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
             if v:IsA('BasePart') then
                 v.CanCollide = false
@@ -89,6 +89,10 @@ function tweenTo(pos, noFall, offset)
             end
         end
     end)
+
+    if (char.HumanoidRootPart.Position - (vec3 or input.Position)).magnitude < tSpeed then
+        char.HumanoidRootPart.CFrame = cframe
+    end
 
     if char and char:FindFirstChild('HumanoidRootPart') then
         Time = (char.HumanoidRootPart.Position - (vec3 or input.Position)).magnitude / studspersecond;
