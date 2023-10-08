@@ -73,9 +73,22 @@ function tweenTo(pos, noFall, offset)
 
         spawn(function()
             task.wait(1)
-            holdPart:Destroy()
+            if ff then
+                ff:Destroy()
+            end
         end)
     end
+
+    spawn(function()
+        for i, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+            if v:IsA('BasePart') then
+                v.CanCollide = false
+            end
+            if v:IsA('MeshPart') then
+                v.CanCollide = false
+            end
+        end
+    end)
 
     if char and char:FindFirstChild('HumanoidRootPart') then
         Time = (char.HumanoidRootPart.Position - (vec3 or input.Position)).magnitude / studspersecond;
@@ -318,8 +331,8 @@ end
 
 local gh = 'https://raw.githubusercontent.com/nuhuhs/PolarisV2/main/'
 local Games = {
-    [4201418016] = {gh .. 'Fabled%20Legacy', 'Fabled'},
-    [13772394625] = {gh .. 'Blade%20Ball', 'Blade Ball'},
+    [4201418016] = { gh .. 'Fabled%20Legacy', 'Fabled' },
+    [13772394625] = { gh .. 'Blade%20Ball', 'Blade Ball' },
 }
 
 print(game.gameId)
