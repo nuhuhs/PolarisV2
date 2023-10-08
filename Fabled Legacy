@@ -53,7 +53,7 @@ function EventMob()
 end
 
 local Main = Window:AddTab('Main');
-local LSCT = Main:AddRightTabbox('LeftTabs');
+local LSCT = Main:AddLeftTabbox('LeftTabs');
 local LSC1 = LSCT:AddTab("Main");
 local LSC2 = LSCT:AddTab("Event");
 local RSCT = Main:AddRightTabbox('RightTabs');
