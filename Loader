@@ -1,1 +1,357 @@
 
+-- Polaris Rewrite v2
+
+repeat wait() until game:IsLoaded() and game.Players.LocalPlayer.Character
+
+-- Client
+
+getgenv().players = game:GetService('Players');
+getgenv().client = players.LocalPlayer;
+getgenv().char = client.Character;
+getgenv().hrp = char:WaitForChild('HumanoidRootPart', math.huge);
+getgenv().hum = char:WaitForChild('Humanoid', math.huge);
+
+local function updateChar()
+    pcall(function()
+        char = client.Character;
+        hrp = char:WaitForChild('HumanoidRootPart', math.huge);
+        hum = char:WaitForChild('Humanoid', math.huge);
+        respawned = true;
+    end)
+end
+
+client.CharacterAdded:Connect(updateChar)
+
+-- Services
+
+getgenv().ReplicatedStorage = game:GetService('ReplicatedStorage')
+getgenv().RunService = game:GetService('RunService')
+
+getgenv().Heartbeat = RunService.Heartbeat
+
+-- Library
+
+getgenv().repo = 'https://raw.githubusercontent.com/nuhuhs/LinoriaTheme/main/'
+
+getgenv().Library = loadstring(game:HttpGet(repo .. 'Main'))()
+getgenv().ThemeManager = loadstring(game:HttpGet(repo .. 'ThemeManager'))()
+getgenv().SaveManager = loadstring(game:HttpGet(repo .. 'SaveManager'))()
+
+getgenv().gameName = getgenv().gameName or 'Universal'
+getgenv().Window = nil;
+
+function CreatePolaris(gn)
+    local gn = gn or gameName or "Universal";
+    Window = Library:CreateWindow({
+
+        Title = 'Polaris || ' .. gameName,
+        Center = false,
+        AutoShow = true,
+        TabPadding = 8,
+        MenuFadeTime = 0.25
+
+    });
+end
+
+function resetTween()
+    pcall(function()
+        tween:Cancel()
+        tween = nil;
+    end)
+end
+
+function tweenTo(pos, noFall, offset)
+    local studspersecond = tSpeed or 50;
+    local vec3, cframe = pos.Position, CFrame.new(pos.X, pos.Y, pos.Z);
+
+    -- No Fall
+
+    if noFall then
+        local holdPart = Instance.new('Part', game:GetService('Workspace'))
+        holdPart.CFrame = hrp.CFrame
+        holdPart.CanCollide = false
+        holdPart.Transparency = 1
+
+        local weld = Instance.new('WeldConstraint')
+        weld.Parent = holdPart
+        weld.Part0 = hrp
+        weld.Part1 = holdPart
+
+        local ff = Instance.new('BodyVelocity')
+        ff.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+        ff.Velocity = Vector3.new(0, 0, 0)
+        ff.Parent = holdPart
+
+        spawn(function()
+            task.wait(1)
+            holdPart:Destroy()
+        end)
+    end
+
+    if char and char:FindFirstChild('HumanoidRootPart') then
+        Time = (char.HumanoidRootPart.Position - (vec3 or input.Position)).magnitude / studspersecond;
+        tween = game.TweenService:Create(char.HumanoidRootPart, TweenInfo.new(Time, Enum.EasingStyle.Linear),
+            { CFrame = cframe });
+        tween:Play();
+    end
+end
+
+local Load = {};
+
+-- Universal UI
+
+function Load:UniversalUI(tabs, WS)
+    local tabs = tabs or {}
+
+    if tabs.Client then
+        local Table = {}
+        local Client;
+        local uis = game:GetService('UserInputService')
+
+        if type(tabs.Client) == "table" then
+            Client = tabs.Client
+        end
+
+        Table.Tab = Client or Window:AddTab('Client');
+
+        Table.LSC1 = Table.Tab:AddLeftGroupbox("Movement");
+
+        Table.Toggle = Table.LSC1:AddToggle('movementSpeed', {
+            Text = 'Walkspeed Toggle',
+            Default = false,
+
+            Callback = function(Value)
+                getgenv().movementSpeed = Value
+
+                while movementSpeed do
+                    task.wait()
+                    local setSpeed = setSpeed or 0
+                    if WS then
+                        hum.WalkSpeed = setSpeed
+                    else
+                        local setter = RunService.Heartbeat:Wait()
+                        if hum.MoveDirection.Magnitude > 0 then
+                            char:TranslateBy(hum.MoveDirection * setSpeed * setter)
+                        end
+                    end
+                end
+            end
+        });
+
+        Table.LSC1:AddSlider('walkSpeed', {
+            Text = 'Speed',
+            Default = 0,
+            Min = 0,
+            Max = 2500,
+            Rounding = 0,
+            Compact = false,
+
+            Callback = function(Value)
+                getgenv().setSpeed = Value
+            end
+        })
+
+        Table.Tabbox1 = Table.Tab:AddRightTabbox('Tabs');
+
+        Table.RSC1 = Table.Tabbox1:AddTab("FPS");
+
+        Table.RSC2 = Table.Tabbox1:AddTab("Character");
+
+        Table.RSC2:AddToggle('infJump', {
+            Text = 'Inf Jump',
+            Default = false,
+
+            Callback = function(Value)
+                getgenv().infJump = Value
+
+                local eee;
+                local db = false
+                eee = uis.JumpRequest:Connect(function()
+                    if not infJump then
+                        eee:Disconnect()
+                    end
+                    if not db then
+                        db = true
+                        hum:ChangeState(Enum.HumanoidStateType.Jumping)
+                        wait()
+                        db = false
+                    end
+                end)
+            end
+        })
+
+        Table.RSC2:AddToggle('noclip', {
+            Text = 'Toggle Noclip',
+            Default = false,
+            Tooltip = 'Go Through Walls.',
+
+            Callback = function(Value)
+                getgenv().noclip = Value
+                while noclip do
+                    game:GetService('RunService').Heartbeat:Wait()
+                    pcall(function()
+                        for i, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+                            if v:IsA('BasePart') then
+                                v.CanCollide = false
+                            end
+                            if v:IsA('MeshPart') then
+                                v.CanCollide = false
+                            end
+                        end
+                    end)
+                end
+            end
+        })
+
+        local ResetChar = Table.RSC2:AddButton({
+            Text = 'Reset Character',
+            Func = function()
+                pcall(function()
+                    char:BreakJoints()
+                end)
+            end,
+            DoubleClick = false,
+        })
+
+        Table.Toggle = Table.RSC1:AddToggle('', {
+            Text = 'Unlock FPS',
+            Default = false,
+            Callback = function(Value)
+                if setfpscap then
+                    if Value then
+                        setfpscap(999)
+                    else
+                        setfpscap(60)
+                    end
+                end
+            end
+        })
+
+        Table.Toggle = Table.RSC1:AddToggle('whitescreen', {
+            Text = 'White Screen',
+            Default = false,
+
+            Callback = function(Value)
+                game:GetService("RunService"):Set3dRenderingEnabled(not Value)
+            end
+        });
+    end
+
+    if tabs.Visual then
+        local Table = {}
+        local Visual;
+
+        if type(tabs.Visual) == "table" then
+            Visual = tabs.Visual
+        end
+
+        Table.Tab = Visual or Window:AddTab('Visual');
+
+        Table.LSC1 = Table.Tab:AddLeftGroupbox("Player ESP");
+
+        Table.ESP1 = Table.LSC1:AddToggle('player_ESP', {
+            Text = 'Player ESP Toggle',
+            Default = false,
+
+            Callback = function(Value)
+                getgenv().p_ESP = Value
+
+                while p_ESP do
+                    Heartbeat:Wait()
+                end
+            end
+        });
+
+        Table.Types = Table.LSC1:AddDropdown('ESP1_Types', {
+            Text = 'ESP Type',
+            Values = { 'Box', 'Username', 'Health', 'Distance' },
+            Multi = true,
+            Default = 2,
+
+            Callback = function(Value)
+                getgenv().ESP1_Types = Value
+            end
+
+        });
+
+        Table.Color = Table.LSC1:AddLabel('Player ESP Color'):AddColorPicker('player_ESPCOLOR', {
+            Default = Library.AccentColor,
+
+            Callback = function(Value)
+                getgenv().plrESP_C3 = Value
+            end
+        })
+
+        tabs.Visual = Table;
+    end
+
+    if tabs.Settings then
+        local Table = {}
+        local Settings;
+
+        if type(tabs.Settings) == "table" then
+            Settings = tabs.Settings
+        end
+
+        Table.Tab = Settings or Window:AddTab('Settings');
+
+        Table.RSC1 = Table.Tab:AddRightGroupbox("UI Settings");
+
+
+        pcall(function()
+            ThemeManager:SetLibrary(Library)
+            ThemeManager:CreateThemeManager(Table.RSC1)
+            ThemeManager:SetFolder('Polaris')
+            SaveManager:SetLibrary(Library)
+            SaveManager:BuildConfigSection(Table.Tab)
+            SaveManager:LoadAutoloadConfig()
+
+            if not folderSet then
+                SaveManager:SetFolder('Polaris/' .. client.Name .. 'Universal')
+                folderSet = true
+            end
+        end)
+
+        Table.LSC1 = Table.Tab:AddLeftGroupbox('UI')
+
+        Table.LSC1:AddLabel('Menu Bind'):AddKeyPicker('MenuKeybind',
+            { Default = 'End', NoUI = true, Text = 'Menu keybind' })
+
+        Table.LSC1:AddButton('Unload', function() Library:Unload() end)
+
+        Library.ToggleKeybind = Options.MenuKeybind
+
+        tabs.Settings = Table;
+    end
+
+    return tabs
+end
+
+local gh = 'https://raw.githubusercontent.com/nuhuhs/PolarisV2/main/'
+local Games = {
+    [4201418016] = {gh .. 'Fabled%20Legacy', 'Fabled'},
+    [13772394625] = {gh .. 'Blade%20Ball', 'Blade Ball'},
+}
+
+print(game.gameId)
+if Games[game.gameId] then
+    local link = Games[game.GameId][1]
+    local nam = Games[game.GameId][2]
+
+    gameName = nam
+    CreatePolaris(gameName)
+    loadstring(game:HttpGet(link))()
+else
+    CreatePolaris()
+end
+
+
+Load:UniversalUI({
+    Client = true,
+    Visual = true,
+    Settings = true,
+})
+
+queue_on_teleport = syn.queue_on_teleport or fluxus.queue_on_teleport or krnl.queue_on_teleport or electron.queue_on_teleport or queue_on_teleport
+
+queue_on_teleport([[loadstring(game:HttpGet('https://raw.githubusercontent.com/nuhuhs/PolarisV2/main/Reload'))()]])
