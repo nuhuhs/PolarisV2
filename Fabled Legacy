@@ -37,7 +37,7 @@ function EventMob()
                 local Found = false;
 
                 for i, v in pairs(Checker) do
-                    if v.Name == 'Indicator' then
+                    if v:IsA('BasePart') and ((v.Name == 'Indicator') or (v.Name == 'Hitbox' and #v:GetChildren() ~= 1)) then
                         Found = true;
                     end
                 end
@@ -70,37 +70,45 @@ function swing()
     end
 end
 
-function DodgeHitboxes()
+function GetSafePos()
     local used = {};
     local val;
+    local dis = math.huge
 
-    repeat
-        Heartbeat:Wait()
-        for i = 1, 100 do
-            local p = hrp.CFrame.p
-            local pos = CFrame.new(p.X + math.random(-10, 10), p.Y, p.Z + math.random(-10, 10))
+    for i = 1, 1000 do
+        local p = hrp.CFrame.p
+        local pos = CFrame.new(p.X + math.random(-10, 10), p.Y + 5, p.Z + math.random(-10, 10))
 
-            if not table.find(used, pos) then
-                table.insert(used, pos)
-                local params = OverlapParams.new({ char:GetDescendants() }, Enum.RaycastFilterType.Blacklist, 1,
-                    "Default")
+        if not table.find(used, pos) then
+            table.insert(used, pos)
+            local params = OverlapParams.new({ char:GetDescendants() }, Enum.RaycastFilterType.Blacklist, 1,
+                "Default")
 
-                local Checker = workspace:GetPartBoundsInBox(pos, Vector3.new(5, 5, 5), params)
-                local Found = false;
+            local Checker = workspace:GetPartBoundsInBox(pos, Vector3.new(5, 5, 5), params)
+            local Found = false;
 
-                for i, v in pairs(Checker) do
-                    if v.Name == 'Indicator' then
-                        Found = true;
-                    end
+            for i, v in pairs(Checker) do
+                if v:IsA('BasePart') and ((v.Name == 'Indicator') or (v.Name == 'Hitbox' and #v:GetChildren() ~= 1)) then
+                    Found = true;
                 end
+            end
 
-                if not Found then
-                    hrp.CFrame = pos
-                    val = true;
+            if not Found then
+                if (hrp.Position - pos.Position).magnitude < dis then
+                    val = pos
                 end
             end
         end
-    until val
+    end
+    return val;
+end
+
+function DodgeHitboxes()
+    local pos = GetSafePos()
+    
+    if pos then
+        hrp.CFrame = pos;
+    end
 end
 
 function startDungeon()
@@ -136,7 +144,7 @@ local autoDodge = RSC1:AddToggle('autoDodge', {
             local parts = game:GetService('Workspace'):GetPartsInPart(hrp)
 
             for _, v in pairs(parts) do
-                if v:IsA('BasePart') and (v.Name == 'Indicator') and #v:GetChildren() ~= 1 then
+                if v:IsA('BasePart') and ((v.Name == 'Indicator') or (v.Name == 'Hitbox' and #v:GetChildren() ~= 1)) then
                     DodgeHitboxes()
                 end
             end
@@ -181,7 +189,7 @@ local autoMob = LSC1:AddToggle('autoMob', {
                         local Found = false;
 
                         for i, v in pairs(Checker) do
-                            if v.Name == 'Indicator' then
+                            if v:IsA('BasePart') and ((v.Name == 'Indicator') or (v.Name == 'Hitbox' and #v:GetChildren() ~= 1)) then
                                 Found = true;
                             end
                         end
@@ -289,7 +297,7 @@ local autoEvent = LSC2:AddToggle('autoEvent', {
                     local Found = false;
 
                     for i, v in pairs(Checker) do
-                        if ((v.Name == 'Hitbox' and #v:GetChildren() ~= 1) or v.Name == 'Indicator') then
+                        if v:IsA('BasePart') and ((v.Name == 'Indicator') or (v.Name == 'Hitbox' and #v:GetChildren() ~= 1)) then
                             Found = true;
                         end
                     end
