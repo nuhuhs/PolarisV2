@@ -90,7 +90,7 @@ function tweenTo(pos, noFall, offset)
         end
     end)
 
-    if (char.HumanoidRootPart.Position - (vec3 or input.Position)).magnitude < tSpeed then
+    if (char.HumanoidRootPart.Position - (vec3 or input.Position)).magnitude < studspersecond then
         char.HumanoidRootPart.CFrame = cframe
     end
 
