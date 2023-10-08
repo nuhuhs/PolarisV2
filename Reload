@@ -1,1 +1,2 @@
-
+-- Ohio!
+loadstring(game:HttpGet('https://raw.githubusercontent.com/nuhuhs/PolarisV2/main/Loader'))()
