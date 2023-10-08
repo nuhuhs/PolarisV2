@@ -169,33 +169,34 @@ local autoMob = LSC1:AddToggle('autoMob', {
 
         while autoMob do
             RunService.Heartbeat:Wait()
+            spawn(function()
+                if GetMob() and char and hrp then
+                    local target = GetMob()
 
-            if GetMob() and char and hrp then
-                local target = GetMob()
+                    if autoDodge then
+                        local pos = target:GetModelCFrame() * CFrame.new(0, 0, 5)
+                        local params = OverlapParams.new({ char:GetDescendants() }, Enum.RaycastFilterType.Blacklist, 1,
+                            "Default")
+                        local Checker = game:GetService('Workspace'):GetPartBoundsInBox(pos, Vector3.new(5, 5, 5), params)
+                        local Found = false;
 
-                if autoDodge then
-                    local pos = target:GetModelCFrame() * CFrame.new(0, 0, 5)
-                    local params = OverlapParams.new({ char:GetDescendants() }, Enum.RaycastFilterType.Blacklist, 1,
-                        "Default")
-                    local Checker = game:GetService('Workspace'):GetPartBoundsInBox(pos, Vector3.new(5, 5, 5), params)
-                    local Found = false;
-
-                    for i, v in pairs(Checker) do
-                        if v.Name == 'Indicator' then
-                            Found = true;
+                        for i, v in pairs(Checker) do
+                            if v.Name == 'Indicator' then
+                                Found = true;
+                            end
                         end
+
+                        if not Found then
+                            tweenTo(pos, true)
+                        end
+                    else
+                        tweenTo(target:GetModelCFrame() * CFrame.new(0, 0, -5), true)
+                        hrp.CFrame = CFrame.lookAt(hrp.Position, target:GetModelCFrame().Position)
                     end
 
-                    if not Found then
-                        tweenTo(pos, true)
-                    end
-                else
-                    tweenTo(target:GetModelCFrame() * CFrame.new(0, 0, -5), true)
-                    hrp.CFrame = CFrame.lookAt(hrp.Position, target:GetModelCFrame().Position)
+                    swing()
                 end
-
-                swing()
-            end
+            end)
         end
 
         resetTween()
