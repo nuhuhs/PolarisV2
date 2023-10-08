@@ -13,7 +13,7 @@ function GetMob()
     local mobFolder = game:GetService('Workspace'):FindFirstChild('Enemies')
     if mobFolder then
         for _, v in pairs(mobFolder:GetChildren()) do
-            if v:IsA('Model') and v:FindFirstChild('Humanoid') and v:FindFirstChild('Humanoid').Health > 0 and v:FindFirstChild('HumanoidRootPart') and (v:GetModelCFrame().Position - hrp.Position).magnitude < dis then
+            if v:IsA('Model') and v:FindFirstChild('Humanoid') and v:FindFirstChild('Humanoid').Health > 0 and v.PrimaryPart and (v:GetModelCFrame().Position - hrp.Position).magnitude < dis then
                 dis = (v:GetModelCFrame().Position - hrp.Position).magnitude
                 target = v;
             end
@@ -29,7 +29,7 @@ function EventMob()
     if mobFolder and game:GetService('Workspace'):FindFirstChild('EndPoint') then
         local part = game:GetService('Workspace'):FindFirstChild('EndPoint')
         for _, v in pairs(mobFolder:GetChildren()) do
-            if v:IsA('Model') and v:FindFirstChild('Humanoid') and v:FindFirstChild('Humanoid').Health > 0 and v:FindFirstChild('HumanoidRootPart') and (v:GetModelCFrame().Position - part.Position).magnitude < dis then
+            if v:IsA('Model') and v:FindFirstChild('Humanoid') and v:FindFirstChild('Humanoid').Health > 0 and v.PrimaryPart and (v:GetModelCFrame().Position - part.Position).magnitude < dis then
                 local pos = v:GetModelCFrame() * CFrame.new(0, 0, 5)
                 local params = OverlapParams.new({ char:GetDescendants() }, Enum.RaycastFilterType.Blacklist, 1,
                     "Default")
