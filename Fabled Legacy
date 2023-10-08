@@ -161,10 +161,10 @@ local autoMob = LSC1:AddToggle('autoMob', {
                     end
 
                     if not Found then
-                        tweenTo(pos)
+                        tweenTo(pos, true)
                     end
                 else
-                    tweenTo(target:GetModelCFrame() * CFrame.new(0, 0, 5))
+                    tweenTo(target:GetModelCFrame() * CFrame.new(0, 0, 5), true)
                     hrp.CFrame = CFrame.lookAt(hrp.Position, target:GetModelCFrame().Position)
                 end
 
