@@ -77,7 +77,7 @@ function GetSafePos()
 
     for i = 1, 1000 do
         local p = hrp.CFrame.p
-        local pos = CFrame.new(p.X + math.random(-10, 10), p.Y + 5, p.Z + math.random(-10, 10))
+        local pos = CFrame.new(p.X + math.random(-1000, 1000), p.Y + 5, p.Z + math.random(-1000, 1000))
 
         if not table.find(used, pos) then
             table.insert(used, pos)
@@ -96,6 +96,7 @@ function GetSafePos()
             if not Found then
                 if (hrp.Position - pos.Position).magnitude < dis then
                     val = pos
+                    dis = (hrp.Position - pos.Position).magnitude
                 end
             end
         end
@@ -105,7 +106,7 @@ end
 
 function DodgeHitboxes()
     local pos = GetSafePos()
-    
+
     if pos then
         hrp.CFrame = pos;
     end
