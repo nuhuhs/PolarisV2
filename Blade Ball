@@ -1,0 +1,178 @@
+-- Blade Ball
+
+local abilities = {}
+
+if char:FindFirstChild('Abilities') then
+    for i, v in pairs(char:FindFirstChild('Abilities'):GetChildren()) do
+        print(v.Name)
+        table.insert(abilities, v.Name)
+    end
+end
+
+SaveManager:SetFolder('Polaris/' .. client.Name .. 'BladeBall')
+getgenv().folderSet = true
+
+local vim = game:GetService('VirtualInputManager');
+
+function pressKey(key)
+    pcall(function()
+        vim:SendKeyEvent(true, Enum.KeyCode[key], false, game)
+        wait()
+        vim:SendKeyEvent(false, Enum.KeyCode[key], false, game)
+    end)
+end
+
+local Main = Window:AddTab('Main');
+local LSC1 = Main:AddLeftGroupbox("Auto");
+local RSC1 = Main:AddRightGroupbox("Visual");
+
+local visualizeRange = RSC1:AddToggle('visualizeRange', {
+    Text = 'Visualize Parry Range',
+    Default = false,
+
+    Callback = function(Value)
+        getgenv().visualizeRange = Value
+
+        if visualizeRange then
+            getgenv().visualizedBall = Instance.new('Part')
+            visualizedBall.CFrame = hrp.CFrame
+            visualizedBall.Anchored = true
+            visualizedBall.Parent = workspace
+            visualizedBall.CanCollide = false
+            visualizedBall.Transparency = 0.75
+            visualizedBall.CastShadow = false
+            visualizedBall.Material = Enum.Material.SmoothPlastic
+
+            while visualizedBall and visualizeRange and hrp do
+                RunService.Heartbeat:Wait()
+                local bbMaxDis = bbMaxDis or 20
+                local md = bbMaxDis or 0
+                visualizedBall.Size = Vector3.new(md, md, md)
+                visualizedBall.CFrame = hrp.CFrame
+            end
+        else
+            if visualizedBall then
+                visualizedBall:Destroy()
+            end
+        end
+    end
+});
+
+local bbPBdb = false;
+getgenv().parryTiming = 2.36
+local autoParry = LSC1:AddToggle('autoParry', {
+    Text = 'Auto Parry',
+    Default = false,
+
+    Callback = function(Value)
+        getgenv().bb_AutoParry = Value
+
+        while bb_AutoParry do
+            pcall(function()
+                Heartbeat:Wait()
+                local real;
+                local fake;
+
+                for _, v in pairs(workspace.Balls:GetChildren()) do
+                    if v:GetAttribute('realBall') or (v:GetAttribute('target') and v:GetAttribute('target') ~= '') then
+                        real = v
+                    else
+                        fake = v
+                    end
+                end
+
+                spawn(function()
+                    pcall(function()
+                        local speed = real:FindFirstChild('zoomies').VectorVelocity
+                        local spX = string.gsub(tostring(speed.X), '-', '')
+                        spX = tonumber(spX)
+                        local spZ = string.gsub(tostring(speed.Z), '-', '')
+                        spZ = tonumber(spZ)
+                        local spY = string.gsub(tostring(speed.Y), '-', '')
+                        spY = tonumber(spY)
+                        if (spX + spZ + spY) / parryTiming == 0 then
+                            getgenv().bbMaxDis = 0;
+                        else
+                            getgenv().bbMaxDis = math.clamp((spX + spZ + spY) / parryTiming, 12.5, 50);
+                        end
+                    end)
+                end)
+
+                local dis = (fake.Position - hrp.Position).Magnitude
+                if (dis <= bbMaxDis) then
+                    if real and real:GetAttribute('target') == client.Name then
+                        pressKey("F")
+                        local old = real;
+                        repeat
+                            Heartbeat:Wait()
+                            for _, v in pairs(workspace.Balls:GetChildren()) do
+                                if v:GetAttribute('realBall') or (v:GetAttribute('target') and v:GetAttribute('target') ~= '') then
+                                    real = v
+                                else
+                                    fake = v
+                                end
+                            end
+                        until real ~= old or real:GetAttribute('target') ~= client.Name
+                    end
+                end
+            end)
+        end
+    end
+});
+
+
+local autoCounter = LSC1:AddToggle('autoCounter', {
+    Text = 'Auto Counter',
+    Default = false,
+
+    Callback = function(Value)
+        getgenv().bb_autoCounter = Value
+    end
+});
+
+local autoRage = LSC1:AddToggle('autoRage', {
+    Text = 'Auto Raging',
+    Default = false,
+
+    Callback = function(Value)
+        getgenv().bb_autoRaging = Value
+    end
+});
+
+
+LSC1:AddSlider('parryTiming', {
+    Text = 'Parrying Timing',
+    Default = 2,
+    Min = 1,
+    Max = 5,
+    Rounding = 2,
+    Compact = false,
+
+    Callback = function(Value)
+        getgenv().parryTiming = Value
+    end
+})
+
+local tpSafeBB = LSC1:AddToggle('tpSafeBB', {
+    Text = 'TP Safely',
+    Default = false,
+    Callback = function(Value)
+        getgenv().tpSafeBB = Value
+
+        while tpSafeBB do
+            Heartbeat:Wait()
+
+            hrp.CFrame = CFrame.new(-275.167419, 200, -69.5898285)
+
+            local noFall = Instance.new('BodyVelocity')
+            noFall.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+            noFall.Velocity = Vector3.new(0, 0, 0)
+            noFall.Parent = hrp
+
+            spawn(function()
+                wait(1)
+                noFall:Destroy()
+            end)
+        end
+    end
+});
