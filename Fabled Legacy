@@ -1,0 +1,363 @@
+-- Fabled Legacy
+
+SaveManager:SetFolder('Polaris/' .. client.Name .. 'Fabled')
+getgenv().folderSet = true
+
+repeat wait() until client:GetAttribute('loaded') == nil or client:GetAttribute('loaded')
+
+task.wait(5)
+
+function GetMob()
+    local dis = math.huge;
+    local target;
+    local mobFolder = game:GetService('Workspace'):FindFirstChild('Enemies')
+    if mobFolder then
+        for _, v in pairs(mobFolder:GetChildren()) do
+            if v:IsA('Model') and v:FindFirstChild('Humanoid') and v:FindFirstChild('Humanoid').Health > 0 and v:FindFirstChild('HumanoidRootPart') and (v:GetModelCFrame().Position - hrp.Position).magnitude < dis then
+                dis = (v:GetModelCFrame().Position - hrp.Position).magnitude
+                target = v;
+            end
+        end
+    end
+    return target
+end
+
+function EventMob()
+    local dis = math.huge;
+    local target;
+    local mobFolder = game:GetService('Workspace'):FindFirstChild('Enemies')
+    if mobFolder and game:GetService('Workspace'):FindFirstChild('EndPoint') then
+        local part = game:GetService('Workspace'):FindFirstChild('EndPoint')
+        for _, v in pairs(mobFolder:GetChildren()) do
+            if v:IsA('Model') and v:FindFirstChild('Humanoid') and v:FindFirstChild('Humanoid').Health > 0 and v:FindFirstChild('HumanoidRootPart') and (v:GetModelCFrame().Position - part.Position).magnitude < dis then
+                local pos = v:GetModelCFrame() * CFrame.new(0, 0, 5)
+                local params = OverlapParams.new({ char:GetDescendants() }, Enum.RaycastFilterType.Blacklist, 1,
+                    "Default")
+                local Checker = game:GetService('Workspace'):GetPartBoundsInBox(pos, Vector3.new(5, 5, 5), params)
+                local Found = false;
+
+                for i, v in pairs(Checker) do
+                    if v.Name == 'Indicator' then
+                        Found = true;
+                    end
+                end
+
+                if not Found then
+                    dis = (v:GetModelCFrame().Position - part.Position).magnitude
+                    target = v;
+                end
+            end
+        end
+    end
+    return target
+end
+
+local Main = Window:AddTab('Main');
+local LSC1 = Main:AddLeftGroupbox("Farm");
+local RSCT = Main:AddRightTabbox('RightTabs');
+local RSC1 = RSCT:AddTab("Auto");
+local RSC2 = RSCT:AddTab('Webhook');
+
+function DodgeHitboxes()
+    local used = {};
+    local val;
+
+    repeat
+        Heartbeat:Wait()
+        for i = 1, 100 do
+            local p = hrp.CFrame.p
+            local pos = CFrame.new(p.X + math.random(-10, 10), p.Y, p.Z + math.random(-10, 10))
+
+            if not table.find(used, pos) then
+                table.insert(used, pos)
+                local params = OverlapParams.new({ char:GetDescendants() }, Enum.RaycastFilterType.Blacklist, 1,
+                    "Default")
+
+                local Checker = workspace:GetPartBoundsInBox(pos, Vector3.new(5, 5, 5), params)
+                local Found = false;
+
+                for i, v in pairs(Checker) do
+                    if v.Name == 'Indicator' then
+                        Found = true;
+                    end
+                end
+
+                if not Found then
+                    hrp.CFrame = pos
+                    val = true;
+                end
+            end
+        end
+    until val
+end
+
+function startDungeon()
+    if game:GetService("ReplicatedStorage"):FindFirstChild("StartDungeon") then
+        game:GetService("ReplicatedStorage"):WaitForChild("StartDungeon"):FireServer()
+    end
+end
+
+local autoDodge = RSC1:AddToggle('autoDodge', {
+    Text = 'Auto Dodge Mobs',
+    Default = false,
+
+    Callback = function(Value)
+        getgenv().autoDodge = Value
+
+        while autoDodge do
+            RunService.Heartbeat:Wait()
+
+            local parts = game:GetService('Workspace'):GetPartsInPart(hrp)
+
+            for _, v in pairs(parts) do
+                if v:IsA('BasePart') and (v.Name == 'Indicator') and #v:GetChildren() ~= 1 then
+                    DodgeHitboxes()
+                end
+            end
+        end
+
+        resetTween()
+    end
+});
+
+RSC2:AddInput('webhook', {
+    Default = '',
+    Numeric = false, -- true / false, only allows numbers
+    Finished = true, -- true / false, only calls callback when you press enter
+
+    Text = 'Webhook',
+
+    Placeholder = 'https://discord.com/api/webhooks/...',
+
+    Callback = function(Value)
+        getgenv().dropHook = Value;
+    end
+})
+
+local autoMob = LSC1:AddToggle('autoMob', {
+    Text = 'Auto Farm Mobs',
+    Default = false,
+
+    Callback = function(Value)
+        getgenv().autoMob = Value
+
+        while autoMob do
+            RunService.Heartbeat:Wait()
+
+            if GetMob() and char and hrp then
+                local target = GetMob()
+
+                if autoDodge then
+                    local pos = target:GetModelCFrame() * CFrame.new(0, 0, 5)
+                    local params = OverlapParams.new({ char:GetDescendants() }, Enum.RaycastFilterType.Blacklist, 1,
+                        "Default")
+                    local Checker = game:GetService('Workspace'):GetPartBoundsInBox(pos, Vector3.new(5, 5, 5), params)
+                    local Found = false;
+
+                    for i, v in pairs(Checker) do
+                        if v.Name == 'Indicator' then
+                            Found = true;
+                        end
+                    end
+
+                    if not Found then
+                        tweenTo(pos)
+                    end
+                else
+                    tweenTo(target:GetModelCFrame() * CFrame.new(0, 0, 5))
+                    hrp.CFrame = CFrame.lookAt(hrp.Position, target:GetModelCFrame().Position)
+                end
+
+                game:GetService("ReplicatedStorage"):WaitForChild("Swing"):FireServer()
+            end
+        end
+
+        resetTween()
+    end
+});
+
+function getDis(pos)
+    local dis = 0;
+    local pos = pos or Vector3.new(0, 0, 0);
+
+    if type(pos) == 'cframe' then
+        pos = pos.p;
+    elseif type(pos) == 'vector' then
+        pos = pos;
+    end
+
+    dis = (hrp.Position - pos).magnitude
+
+    return dis;
+end
+
+local eDB = false;
+
+local autoEvent = LSC1:AddToggle('autoEvent', {
+    Text = 'Auto Farm Event',
+    Default = false,
+
+    Callback = function(Value)
+        getgenv().autoEvent = Value
+
+        while autoEvent do
+            RunService.Heartbeat:Wait()
+
+            spawn(function()
+                game:GetService("ReplicatedStorage"):WaitForChild("addSkillPoints"):FireServer("spell", 1)
+
+                startDungeon()
+            end)
+
+            if EventMob() and char and hrp then
+                local target = EventMob()
+
+                if autoDodge then
+                    local pos = target:GetModelCFrame() * CFrame.new(math.random(-5, 5), 0, -15)
+                    local params = OverlapParams.new({ char:GetDescendants() }, Enum.RaycastFilterType.Blacklist, 1,
+                        "Default")
+                    local Checker = game:GetService('Workspace'):GetPartBoundsInBox(pos, Vector3.new(5, 5, 5), params)
+                    local Found = false;
+
+                    for i, v in pairs(Checker) do
+                        if ((v.Name == 'Hitbox' and #v:GetChildren() ~= 1) or v.Name == 'Indicator') then
+                            Found = true;
+                        end
+                    end
+
+                    if not Found then
+                        if target.Name == 'Cannonclaw' then
+                            hrp.CFrame = CFrame.new(-141.239822, 57.2467499, -153.527451)
+                            hrp.CFrame = CFrame.lookAt(hrp.Position, target:GetModelCFrame().Position)
+                        else
+                            tweenTo(target:GetModelCFrame() * CFrame.new(math.random(-5, 5), 0, -15))
+                            hrp.CFrame = CFrame.lookAt(hrp.Position, target:GetModelCFrame().Position)
+                        end
+                    end
+                else
+                    if target.Name == 'Cannonclaw' then
+                        hrp.CFrame = CFrame.new(-141.239822, 57.2467499, -153.527451)
+                        hrp.CFrame = CFrame.lookAt(hrp.Position, target:GetModelCFrame().Position)
+                    else
+                        tweenTo(target:GetModelCFrame() * CFrame.new(math.random(-5, 5), 0, -15))
+                        hrp.CFrame = CFrame.lookAt(hrp.Position, target:GetModelCFrame().Position)
+                    end
+                end
+
+                spawn(function()
+                    if ((target.Name == 'Cannonclaw' and getDis(target:GetModelCFrame().Position) < 100) or getDis(target:GetModelCFrame().Position) < 25) and target:FindFirstChild('Humanoid') then
+                        local Health = target:FindFirstChild('Humanoid').Health
+                        if not eDB then
+                            game:GetService("ReplicatedStorage"):WaitForChild("useSpell"):FireServer("E")
+                            wait(.5)
+                            eDB = true;
+                            qDB = false;
+                        elseif eDB and not qDB then
+                            game:GetService("ReplicatedStorage"):WaitForChild("useSpell"):FireServer("Q")
+                            wait(.5)
+                            eDB = false;
+                            qDB = true;
+                        else
+                            eDB = false;
+                            qDB = false;
+                        end
+                    end
+                end)
+
+                game:GetService("ReplicatedStorage"):WaitForChild("Bolt"):FireServer()
+            end
+        end
+
+        resetTween()
+    end
+});
+
+local rarityNotis = {
+    ['common'] = false,
+    ['uncommon'] = false,
+    ['rare'] = false,
+    ['epic'] = false,
+    ['legendary'] = false,
+    ['secret'] = true,
+}
+
+RSC2:AddDropdown('rarityNotis', {
+    Values = { 'secret', 'legendary', 'epic', 'rare', 'uncommon', 'common' },
+    Default = 1,  -- number index of the value / string
+    Multi = true, -- true / false, allows multiple choices to be selected
+
+    Text = 'Notify On Rarity',
+
+    Callback = function(Value)
+        pcall(function()
+            rarityNotis = Value;
+        end)
+    end
+})
+
+local fabledItems = RSC2:AddToggle('fabledItems', {
+    Text = 'Notify Dropped Items',
+    Default = false,
+
+    Callback = function(Value)
+        getgenv().fabledItems = Value
+        local plrGui = client:FindFirstChild('PlayerGui')
+
+        if plrGui and plrGui:FindFirstChild('Inventory') and plrGui:FindFirstChild('Inventory'):FindFirstChild('Inventory') and plrGui:FindFirstChild('Inventory'):FindFirstChild('Inventory'):FindFirstChild('RightSide') and plrGui:FindFirstChild('Inventory'):FindFirstChild('Inventory'):FindFirstChild('RightSide'):FindFirstChild('ScrollingFrame') then
+            plrGui:FindFirstChild('Inventory'):FindFirstChild('Inventory'):FindFirstChild('RightSide')
+                :FindFirstChild('ScrollingFrame').ChildAdded:Connect(function(item)
+                if item:FindFirstChild('itemStats') then
+                    local stats = item:FindFirstChild('itemStats')
+                    if stats:FindFirstChild('itemRarity') and stats:FindFirstChild('itemName') then
+                        local nam = stats:FindFirstChild('itemName').Value
+                        local rarity = stats:FindFirstChild('itemRarity').Value
+
+                        if dropHook and rarityNotis[rarity] then
+                            local data = {
+                                ["embeds"] = {
+                                    {
+                                        ["title"] = "Polaris || Fabled Legacy",
+                                        ["description"] = "**Item Drop!!**",
+                                        ["type"] = "rich",
+                                        ["color"] = tonumber(16777215),
+                                        ["fields"] = {
+                                            {
+                                                ["name"] = "",
+                                                ["value"] = '```User: ' .. client.Name .. '\nObtained: ' .. nam .. '\nRarity: ' .. string.upper(rarity) .. '```',
+                                                ["inline"] = true
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            local newdata = game:GetService("HttpService"):JSONEncode(data)
+
+                            local headers = {
+                                ["content-type"] = "application/json"
+                            }
+
+                            request = http_request or request or HttpPost or syn.request
+                            local msg = { Url = dropHook, Body = newdata, Method = "POST", Headers = headers }
+                            request(msg)
+
+                            if rarity == 'secret' then
+                                local data = {
+                                    ["content"] = '|| @everyone || '
+                                }
+                                local newdata = game:GetService("HttpService"):JSONEncode(data)
+
+                                local headers = {
+                                    ["content-type"] = "application/json"
+                                }
+
+                                request = http_request or request or HttpPost or syn.request
+                                local msg = { Url = dropHook, Body = newdata, Method = "POST", Headers = headers }
+                                request(msg)
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+    end
+});
