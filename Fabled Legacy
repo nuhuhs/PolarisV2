@@ -109,6 +109,20 @@ function startDungeon()
     end
 end
 
+local autoStart = RSC1:AddToggle('autoStart', {
+    Text = 'Auto Start',
+    Default = false,
+
+    Callback = function(Value)
+        getgenv().autoStart = Value
+
+        while autoStart do
+            RunService.Heartbeat:Wait()
+            startDungeon()
+        end
+    end
+});
+
 local autoDodge = RSC1:AddToggle('autoDodge', {
     Text = 'Auto Dodge Mobs',
     Default = false,
