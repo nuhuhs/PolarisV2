@@ -66,20 +66,10 @@ function tweenTo(pos, noFall, offset)
     -- No Fall
 
     if noFall then
-        local holdPart = Instance.new('Part', game:GetService('Workspace'))
-        holdPart.CFrame = hrp.CFrame
-        holdPart.CanCollide = false
-        holdPart.Transparency = 1
-
-        local weld = Instance.new('WeldConstraint')
-        weld.Parent = holdPart
-        weld.Part0 = hrp
-        weld.Part1 = holdPart
-
         local ff = Instance.new('BodyVelocity')
         ff.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
         ff.Velocity = Vector3.new(0, 0, 0)
-        ff.Parent = holdPart
+        ff.Parent = hrp
 
         spawn(function()
             task.wait(1)
