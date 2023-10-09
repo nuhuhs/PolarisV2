@@ -287,10 +287,10 @@ local autoEvent = LSC2:AddToggle('autoEvent', {
 
                 startDungeon()
             end)
-            print('1')
+            print(char)
+            print(hrp)
             if EventMob() and char and hrp then
                 local target = EventMob()
-                print('2')
 
                 if autoDodge then
                     local pos = target:GetModelCFrame() * CFrame.new(math.random(-5, 5), 0, -15)
