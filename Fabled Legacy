@@ -30,22 +30,8 @@ function EventMob()
         local part = game:GetService('Workspace'):FindFirstChild('EndPoint')
         for _, v in pairs(mobFolder:GetChildren()) do
             if v:IsA('Model') and v:FindFirstChild('Humanoid') and v:FindFirstChild('Humanoid').Health > 0 and v.PrimaryPart and (v:GetModelCFrame().Position - part.Position).magnitude < dis then
-                local pos = v:GetModelCFrame() * CFrame.new(0, 0, 5)
-                local params = OverlapParams.new({ char:GetDescendants() }, Enum.RaycastFilterType.Blacklist, 1,
-                    "Default")
-                local Checker = game:GetService('Workspace'):GetPartBoundsInBox(pos, Vector3.new(5, 5, 5), params)
-                local Found = false;
-
-                for i, v in pairs(Checker) do
-                    if v:IsA('BasePart') and ((v.Name == 'Indicator') or (v.Name == 'Hitbox' and #v:GetChildren() ~= 1)) then
-                        Found = true;
-                    end
-                end
-
-                if not Found then
-                    dis = (v:GetModelCFrame().Position - part.Position).magnitude
-                    target = v;
-                end
+                dis = (v:GetModelCFrame().Position - part.Position).magnitude
+                target = v;
             end
         end
     end
@@ -287,8 +273,7 @@ local autoEvent = LSC2:AddToggle('autoEvent', {
 
                 startDungeon()
             end)
-            print(char)
-            print(hrp)
+
             if EventMob() and char and hrp then
                 local target = EventMob()
 
@@ -315,7 +300,6 @@ local autoEvent = LSC2:AddToggle('autoEvent', {
                         end
                     end
                 else
-                    print('3')
                     if target.Name == 'Cannonclaw' then
                         hrp.CFrame = CFrame.new(-141.239822, 57.2467499, -153.527451)
                         hrp.CFrame = CFrame.lookAt(hrp.Position, target:GetModelCFrame().Position)
@@ -324,7 +308,7 @@ local autoEvent = LSC2:AddToggle('autoEvent', {
                         hrp.CFrame = CFrame.lookAt(hrp.Position, target:GetModelCFrame().Position)
                     end
                 end
-                print('4')
+
                 spawn(function()
                     if ((target.Name == 'Cannonclaw') or getDis(target:GetModelCFrame().Position) < 25) and target:FindFirstChild('Humanoid') then
                         local Health = target:FindFirstChild('Humanoid').Health
@@ -344,7 +328,7 @@ local autoEvent = LSC2:AddToggle('autoEvent', {
                         end
                     end
                 end)
-                print('5')
+
                 swing()
             end
         end
