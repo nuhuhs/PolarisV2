@@ -281,14 +281,16 @@ local autoEvent = LSC2:AddToggle('autoEvent', {
         while autoEvent do
             RunService.Heartbeat:Wait()
 
+
             spawn(function()
                 game:GetService("ReplicatedStorage"):WaitForChild("addSkillPoints"):FireServer("spell", 1)
 
                 startDungeon()
             end)
-
+            print('1')
             if EventMob() and char and hrp then
                 local target = EventMob()
+                print('2')
 
                 if autoDodge then
                     local pos = target:GetModelCFrame() * CFrame.new(math.random(-5, 5), 0, -15)
@@ -313,6 +315,7 @@ local autoEvent = LSC2:AddToggle('autoEvent', {
                         end
                     end
                 else
+                    print('3')
                     if target.Name == 'Cannonclaw' then
                         hrp.CFrame = CFrame.new(-141.239822, 57.2467499, -153.527451)
                         hrp.CFrame = CFrame.lookAt(hrp.Position, target:GetModelCFrame().Position)
@@ -321,9 +324,9 @@ local autoEvent = LSC2:AddToggle('autoEvent', {
                         hrp.CFrame = CFrame.lookAt(hrp.Position, target:GetModelCFrame().Position)
                     end
                 end
-
+                print('4')
                 spawn(function()
-                    if ((target.Name == 'Cannonclaw' and getDis(target:GetModelCFrame().Position) < 100) or getDis(target:GetModelCFrame().Position) < 25) and target:FindFirstChild('Humanoid') then
+                    if ((target.Name == 'Cannonclaw') or getDis(target:GetModelCFrame().Position) < 25) and target:FindFirstChild('Humanoid') then
                         local Health = target:FindFirstChild('Humanoid').Health
                         if not eDB then
                             game:GetService("ReplicatedStorage"):WaitForChild("useSpell"):FireServer("E")
@@ -341,7 +344,7 @@ local autoEvent = LSC2:AddToggle('autoEvent', {
                         end
                     end
                 end)
-
+                print('5')
                 swing()
             end
         end
