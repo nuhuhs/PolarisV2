@@ -165,6 +165,7 @@ LSC1:AddLabel('Spam Parry'):AddKeyPicker('autoSpam', {
     NoUI = false,
 
     Callback = function(Value)
+        print(Value)
         local spamParry_bb = Value;
 
         while spamParry_bb do
