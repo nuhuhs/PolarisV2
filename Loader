@@ -332,7 +332,7 @@ end
 local gh = 'https://raw.githubusercontent.com/nuhuhs/PolarisV2/main/'
 local Games = {
     [4201418016] = { gh .. 'Fabled%20Legacy', 'Fabled' },
-    [13772394625] = { gh .. 'Blade%20Ball', 'Blade Ball' },
+    [4777817887] = { gh .. 'Blade%20Ball', 'Blade Ball' },
 }
 
 print(game.gameId)
