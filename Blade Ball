@@ -138,7 +138,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
                         if bb_autoRaging then
                             game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild(
                                 "PlrRagingDeflectiond"):FireServer()
-                            task.wait(.1)
+                            task.wait()
                         end
 
                         spawn(function()
