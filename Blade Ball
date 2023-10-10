@@ -49,6 +49,17 @@ end
 local Main = Window:AddTab('Main');
 local LSC1 = Main:AddLeftGroupbox("Auto");
 local RSC1 = Main:AddRightGroupbox("Visual");
+local RSC2 = Main:AddRightGroupbox("Laggy");
+
+local iced_bb = RSC2:AddButton({
+    Text = 'Is this ice?',
+    Func = function()
+        for i = 1, 100 do
+            game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Freeze"):FireServer()
+        end
+    end,
+    DoubleClick = false
+})
 
 local visualizeRange = RSC1:AddToggle('visualizeRange', {
     Text = 'Visualize Parry Range',
@@ -63,9 +74,9 @@ local visualizeRange = RSC1:AddToggle('visualizeRange', {
             visualizedBall.Anchored = true
             visualizedBall.Parent = workspace
             visualizedBall.CanCollide = false
-            visualizedBall.Transparency = 0.75
+            visualizedBall.Transparency = 0.85
             visualizedBall.CastShadow = false
-            visualizedBall.Material = Enum.Material.SmoothPlastic
+            visualizedBall.Material = Enum.Material.ForceField
 
             while visualizedBall and visualizeRange and hrp do
                 RunService.Heartbeat:Wait()
@@ -126,11 +137,12 @@ local autoParry = LSC1:AddToggle('autoParry', {
                 spawn(function()
                     if (dis <= bbMaxDis * 1.25) then
                         if real and real:GetAttribute('target') == client.Name then
-                            spawn(function ()
+                            spawn(function()
                                 if bb_autoRaging then
                                     hrp.CFrame = fake.CFrame
                                     game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild(
                                         "PlrRagingDeflectiond"):FireServer()
+                                    pressKey('F')
                                 end
                             end)
                             if autoSwap then
@@ -142,7 +154,6 @@ local autoParry = LSC1:AddToggle('autoParry', {
 
                 if (dis <= bbMaxDis) then
                     if real and real:GetAttribute('target') == client.Name then
-
                         spawn(function()
                             Parry()
                         end)
