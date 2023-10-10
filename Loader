@@ -2,20 +2,21 @@
 
 repeat wait() until game:IsLoaded() and game.Players.LocalPlayer.Character
 
+print('Polaris V2'.. 'Test Script Loaded!')
+
 -- Client
 
-getgenv().players = game:GetService('Players');
-getgenv().client = players.LocalPlayer;
-getgenv().char = client.Character;
-getgenv().hrp = char:WaitForChild('HumanoidRootPart', math.huge);
-getgenv().hum = char:WaitForChild('Humanoid', math.huge);
+players = game:GetService('Players');
+client = players.LocalPlayer;
+char = client.Character;
+hrp = char:WaitForChild('HumanoidRootPart', math.huge);
+hum = char:WaitForChild('Humanoid', math.huge);
 
 local function updateChar()
     pcall(function()
         char = client.Character;
         hrp = char:WaitForChild('HumanoidRootPart', math.huge);
         hum = char:WaitForChild('Humanoid', math.huge);
-        respawned = true;
     end)
 end
 
@@ -23,10 +24,10 @@ client.CharacterAdded:Connect(updateChar)
 
 -- Services
 
-getgenv().ReplicatedStorage = game:GetService('ReplicatedStorage')
-getgenv().RunService = game:GetService('RunService')
+ReplicatedStorage = game:GetService('ReplicatedStorage')
+RunService = game:GetService('RunService')
 
-getgenv().Heartbeat = RunService.Heartbeat
+Heartbeat = RunService.Heartbeat
 
 -- Library
 
@@ -38,6 +39,14 @@ SaveManager = loadstring(game:HttpGet(repo .. 'SaveManager'))()
 
 getgenv().gameName = getgenv().gameName or 'Universal'
 Window = nil;
+
+task.spawn(function()
+    pcall(function()
+        game:GetService('Players').LocalPlayer.Idled:connect(function()
+            game:GetService('VirtualUser'):ClickButton2(Vector2.new())
+        end)
+    end)
+end)
 
 function CreatePolaris(gn)
     local gn = gn or gameName or "Universal";
@@ -340,7 +349,7 @@ if Games[game.gameId] then
     local link = Games[game.GameId][1]
     local nam = Games[game.GameId][2]
 
-    gameName = nam
+    gameName = nam or gameName
     CreatePolaris(gameName)
     loadstring(game:HttpGet(link))()
 else
