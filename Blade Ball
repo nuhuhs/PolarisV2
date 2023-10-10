@@ -158,7 +158,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
 });
 
 local autoSpam = LSC1:AddToggle('autoSpam', {
-    Text = 'Auto Spam Parry (Hold H)',
+    Text = 'Auto Spam Parry (Hold E)',
     Default = false,
 
     Callback = function(Value)
