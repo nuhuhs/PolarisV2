@@ -41,7 +41,7 @@ function Parry()
             [2] = 588
         }
     }
-    
+
     game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("ParryAttempt"):FireServer(unpack(args))
     game:GetService("ReplicatedStorage").Remotes.ParrySuccess:FireServer()
     game:GetService("ReplicatedStorage").Remotes.ParrySuccessAll:FireServer()
@@ -124,6 +124,14 @@ local autoParry = LSC1:AddToggle('autoParry', {
                 end)
 
                 local dis = (fake.Position - hrp.Position).Magnitude
+                spawn(function()
+                    if (dis <= bbMaxDis * 2) then
+                        if autoSwap then
+                            pressKey('Q')
+                        end
+                    end
+                end)
+
                 if (dis <= bbMaxDis) then
                     if real and real:GetAttribute('target') == client.Name then
                         spawn(function()
@@ -149,12 +157,12 @@ local autoParry = LSC1:AddToggle('autoParry', {
 });
 
 
-local autoCounter = LSC1:AddToggle('autoCounter', {
-    Text = 'Auto Counter',
+local autoCounter = LSC1:AddToggle('autoSwap', {
+    Text = 'Auto Swap (Requires Swap Equip)',
     Default = false,
 
     Callback = function(Value)
-        getgenv().bb_autoCounter = Value
+        getgenv().autoSwap = Value
     end
 });
 
