@@ -157,6 +157,26 @@ local autoParry = LSC1:AddToggle('autoParry', {
     end
 });
 
+LSC1:AddLabel('Spam Parry'):AddKeyPicker('autoSpam', {
+    Default = 'H',
+    SyncToggleState = false,
+    Mode = 'Toggle',
+    Text = 'Spam Parry',
+    NoUI = false,
+
+    Callback = function(Value)
+        local spamParry_bb = Value;
+
+        while spamParry_bb do
+            Heartbeat:Wait()
+            spawn(function()
+                pressKey('F')
+                Parry()
+            end)
+        end
+    end,
+})
+
 
 local autoCounter = LSC1:AddToggle('autoSwap', {
     Text = 'Auto Swap (Requires Swap Equip)',
