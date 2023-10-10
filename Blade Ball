@@ -156,6 +156,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
                     if real and real:GetAttribute('target') == client.Name then
                         spawn(function()
                             Parry()
+                            pressKey('F')
                         end)
 
                         local old = real;
