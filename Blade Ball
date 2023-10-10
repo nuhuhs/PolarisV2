@@ -128,7 +128,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
                         if (spX + spZ + spY) / parryTiming == 0 then
                             getgenv().bbMaxDis = 0;
                         else
-                            getgenv().bbMaxDis = math.clamp((spX + spZ + spY) / parryTiming, 12.5, 50);
+                            getgenv().bbMaxDis = math.clamp((spX + spZ + spY) / parryTiming, 0, 50);
                         end
                     end)
                 end)
@@ -198,6 +198,7 @@ uis.InputBegan:Connect(function(input, proc)
             spawn(function()
                 for i = 1, 5 do
                     Parry()
+                    pressKey('F')
                 end
             end)
         end
