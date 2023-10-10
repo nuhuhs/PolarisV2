@@ -47,8 +47,9 @@ function Parry()
             [2] = 174
         }
     }
-    
+
     game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("ParryAttempt"):FireServer(unpack(args))
+    game:GetService("ReplicatedStorage").Remotes.ParrySuccess:FireServer()
 end
 
 local Main = Window:AddTab('Main');
@@ -130,7 +131,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
                 local dis = (fake.Position - hrp.Position).Magnitude
                 if (dis <= bbMaxDis) then
                     if real and real:GetAttribute('target') == client.Name then
-                        spawn(function ()
+                        spawn(function()
                             Parry()
                         end)
 
