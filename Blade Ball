@@ -168,7 +168,7 @@ local autoSpam = LSC1:AddToggle('autoSpam', {
 
 local holding = false;
 local uis = game:GetService('UserInputService');
-local key = "H";
+local key = "E";
 
 uis.InputBegan:Connect(function(input, proc)
     if input.KeyCode == Enum.KeyCode[key] and not proc then
@@ -176,7 +176,6 @@ uis.InputBegan:Connect(function(input, proc)
 
         while holding do
             game:GetService('RunService').Heartbeat:Wait()
-            pressKey('F')
             Parry()
         end
     end
