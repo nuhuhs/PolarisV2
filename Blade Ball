@@ -171,12 +171,16 @@ local uis = game:GetService('UserInputService');
 local key = "E";
 
 uis.InputBegan:Connect(function(input, proc)
-    if input.KeyCode == Enum.KeyCode[key] and not proc then
+    if input.KeyCode == Enum.KeyCode[key] and not proc and autoSpam then
         holding = true;
 
         while holding do
             game:GetService('RunService').Heartbeat:Wait()
-            Parry()
+            spawn(function()
+                for i = 1, 5 do
+                    Parry()
+                end
+            end)
         end
     end
 end)
