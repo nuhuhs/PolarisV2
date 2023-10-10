@@ -142,7 +142,6 @@ local autoParry = LSC1:AddToggle('autoParry', {
                                     hrp.CFrame = fake.CFrame
                                     game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild(
                                         "PlrRagingDeflectiond"):FireServer()
-                                    pressKey('F')
                                 end
                             end)
                             if autoSwap then
@@ -155,7 +154,6 @@ local autoParry = LSC1:AddToggle('autoParry', {
                 if (dis <= bbMaxDis) then
                     if real and real:GetAttribute('target') == client.Name then
                         spawn(function()
-                            Parry()
                             pressKey('F')
                         end)
 
