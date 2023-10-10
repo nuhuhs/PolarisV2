@@ -160,12 +160,12 @@ local autoParry = LSC1:AddToggle('autoParry', {
 LSC1:AddLabel('Spam Parry'):AddKeyPicker('autoSpam', {
     Default = 'H',
     SyncToggleState = false,
-    Mode = 'Toggle',
+    Mode = 'Hold',
     Text = 'Spam Parry',
     NoUI = false,
 
-    Callback = function()
-        local spamParry_bb = not spamParry_bb;
+    Callback = function(Value)
+        local spamParry_bb = not Value;
 
         while spamParry_bb do
             Heartbeat:Wait()
