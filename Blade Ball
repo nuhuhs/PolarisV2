@@ -165,7 +165,7 @@ LSC1:AddLabel('Spam Parry'):AddKeyPicker('autoSpam', {
     NoUI = false,
 
     Callback = function(Value)
-        local spamParry_bb = not Value;
+        local spamParry_bb = Value;
 
         while spamParry_bb do
             Heartbeat:Wait()
