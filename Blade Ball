@@ -23,7 +23,6 @@ function pressKey(key)
 end
 
 function Parry()
-    pressKey("F")
     local args = {
         [1] = 0.5,
         [2] = CFrame.new(-335.9100036621094, 38.95621109008789, -71.57254028320312, -0.4614456593990326, 0.566535472869873, -0.6827192902565002, 0, 0.7695486545562744, 0.6385883092880249, 0.8871685266494751, 0.2946738004684448, -0.35510486364364624),
@@ -45,7 +44,6 @@ function Parry()
 
     game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("ParryAttempt"):FireServer(unpack(args))
     game:GetService("ReplicatedStorage").Remotes.ParrySuccess:FireServer()
-    game:GetService("ReplicatedStorage").Remotes.ParrySuccessAll:FireServer()
 end
 
 local Main = Window:AddTab('Main');
@@ -126,7 +124,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
 
                 local dis = (fake.Position - hrp.Position).Magnitude
                 spawn(function()
-                    if (dis <= bbMaxDis * 2) then
+                    if (dis <= bbMaxDis * 1.25) then
                         if real and real:GetAttribute('target') == client.Name then
                             if autoSwap then
                                 pressKey('Q')
