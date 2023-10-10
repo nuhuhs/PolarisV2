@@ -67,28 +67,6 @@ local iced_bbv2 = RSC2:AddToggle('iced_bbv2', {
 
     Callback = function(Value)
         getgenv().bb_defense = Value
-
-        local balls = game:GetService('Workspace'):FindFirstChild('Balls')
-
-        local real;
-        local fake;
-
-        for _, v in pairs(workspace.Balls:GetChildren()) do
-            if v:GetAttribute('realBall') or (v:GetAttribute('target') and v:GetAttribute('target') ~= '') then
-                real = v
-            else
-                fake = v
-            end
-        end
-
-        while bb_defense do
-            Heartbeat:Wait()
-
-
-            if real and real:GetAttribute('target') == client.Name then
-                game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Freeze"):FireServer()
-            end
-        end
     end
 });
 
@@ -166,6 +144,13 @@ local autoParry = LSC1:AddToggle('autoParry', {
 
                 local dis = (fake.Position - hrp.Position).Magnitude
                 spawn(function()
+                    spawn(function()
+                        if real and real:GetAttribute('target') == client.Name then
+                            if bb_defense then
+                                game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Freeze"):FireServer()
+                            end
+                        end
+                    end)
                     if (dis <= bbMaxDis * 1.25) then
                         if real and real:GetAttribute('target') == client.Name then
                             spawn(function()
