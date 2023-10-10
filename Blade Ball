@@ -157,27 +157,36 @@ local autoParry = LSC1:AddToggle('autoParry', {
     end
 });
 
-LSC1:AddLabel('Spam Parry'):AddKeyPicker('autoSpam', {
-    Default = 'H',
-    SyncToggleState = false,
-    Mode = 'Hold',
-    Text = 'Spam Parry',
-    NoUI = false,
+local autoSpam = LSC1:AddToggle('autoSpam', {
+    Text = 'Auto Spam Parry (Hold H)',
+    Default = false,
 
     Callback = function(Value)
-        print(Value)
-        local spamParry_bb = Value;
+        getgenv().autoSpam = Value
+    end
+});
 
-        while spamParry_bb do
-            Heartbeat:Wait()
-            spawn(function()
-                pressKey('F')
-                Parry()
-            end)
+local holding = false;
+local uis = game:GetService('UserInputService');
+local key = "H";
+
+uis.InputBegan:Connect(function(input, proc)
+    if input.KeyCode == Enum.KeyCode[key] and not proc then
+        holding = true;
+
+        while holding do
+            game:GetService('RunService').Heartbeat:Wait()
+            pressKey('F')
+            Parry()
         end
-    end,
-})
+    end
+end)
 
+uis.InputEnded:Connect(function(input, proc)
+    if input.KeyCode == Enum.KeyCode[key] and not proc then
+        holding = false;
+    end
+end)
 
 local autoCounter = LSC1:AddToggle('autoSwap', {
     Text = 'Auto Swap (Requires Swap Equip)',
