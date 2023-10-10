@@ -61,6 +61,31 @@ local iced_bb = RSC2:AddButton({
     DoubleClick = false
 })
 
+local iced_bbv2 = RSC1:AddToggle('iced_bbv2', {
+    Text = 'Ultimate Defense (Freeze)',
+    Default = false,
+
+    Callback = function(Value)
+        getgenv().bb_defense = Value
+
+        local balls = game:GetService('Workspace'):FindFirstChild('Balls')
+
+        local real;
+
+
+        while bb_defense do
+            Heartbeat:Wait()
+            if balls:GetChildren()[2] then
+                real = balls:GetChildren()[2]
+
+                if real and real:GetAttribute('target') == client.Name then
+                    game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Freeze"):FireServer()
+                end
+            end
+        end
+    end
+});
+
 local visualizeRange = RSC1:AddToggle('visualizeRange', {
     Text = 'Visualize Parry Range',
     Default = false,
