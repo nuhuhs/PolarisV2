@@ -61,7 +61,7 @@ local iced_bb = RSC2:AddButton({
     DoubleClick = false
 })
 
-local iced_bbv2 = RSC1:AddToggle('iced_bbv2', {
+local iced_bbv2 = RSC2:AddToggle('iced_bbv2', {
     Text = 'Ultimate Defense (Freeze)',
     Default = false,
 
