@@ -170,9 +170,21 @@ local autoParry = LSC1:AddToggle('autoParry', {
 
                 if (dis <= bbMaxDis) then
                     if real and real:GetAttribute('target') == client.Name then
+                        local old = real;
                         spawn(function()
                             Parry()
                         end)
+
+                        repeat
+                            Heartbeat:Wait()
+                            for _, v in pairs(workspace.Balls:GetChildren()) do
+                                if v:GetAttribute('realBall') or (v:GetAttribute('target') and v:GetAttribute('target') ~= '') then
+                                    real = v
+                                else
+                                    fake = v
+                                end
+                            end
+                        until real ~= old or real:GetAttribute('target') ~= client.Name
                     end
                 end
             end)
