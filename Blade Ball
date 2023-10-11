@@ -178,6 +178,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
 
                 if (dis <= bbMaxDis) then
                     if real and real:GetAttribute('target') == client.Name then
+                        local old = real;
                         spawn(function()
                             ParryAttempt()
                         end)
