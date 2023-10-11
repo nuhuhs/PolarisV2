@@ -157,6 +157,17 @@ local autoParry = LSC1:AddToggle('autoParry', {
                                 game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Freeze")
                                     :FireServer()
                             end
+                        else
+                            spawn(function()
+                                if real and players:FindFirstChild(real:GetAttribute('target')) then
+                                    if players:FindFirstChild(real:GetAttribute('target')).Character then
+                                        getgenv().previousTarget = players:FindFirstChild(real:GetAttribute('target'))
+                                            .Character
+                                    else
+                                        getgenv().previousTarget = players:FindFirstChild(real:GetAttribute('target'))
+                                    end
+                                end
+                            end)
                         end
                     end)
                     if (dis <= bbMaxDis * 1.25) then
@@ -177,8 +188,25 @@ local autoParry = LSC1:AddToggle('autoParry', {
                             end
                         end)
                         local old = real;
+                        
                         spawn(function()
-                            ParryAttempt()
+                            if typeof(previousTarget) == 'model' then
+                                local pos = previousTarget:GetModelCFrame().p
+                                local dis = (hrp.Position - pos).Magnitude
+
+                                local newTarget = previousTarget
+
+                                if dis <= 25 then
+                                    repeat
+                                        Heartbeat:Wait()
+                                        pos = previousTarget:GetModelCFrame().p
+                                        dis = (hrp.Position - pos).Magnitude
+                                        Clash()
+                                    until dis >= 25 or previousTarget ~= newTarget
+                                else
+                                    ParryAttempt()
+                                end
+                            end
                         end)
 
 
