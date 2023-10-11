@@ -163,7 +163,6 @@ local autoParry = LSC1:AddToggle('autoParry', {
                         if real and real:GetAttribute('target') == client.Name then
                             spawn(function()
                                 if bb_autoRaging then
-                                    hrp.CFrame = fake.CFrame
                                     game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild(
                                         "PlrRagingDeflectiond"):FireServer()
                                 end
