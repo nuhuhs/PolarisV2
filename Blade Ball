@@ -188,7 +188,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
                             end
                         end)
                         local old = real;
-                        
+
                         spawn(function()
                             if typeof(previousTarget) == 'model' then
                                 local pos = previousTarget:GetModelCFrame().p
@@ -206,6 +206,8 @@ local autoParry = LSC1:AddToggle('autoParry', {
                                 else
                                     ParryAttempt()
                                 end
+                            else
+                                ParryAttempt()
                             end
                         end)
 
