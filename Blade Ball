@@ -41,6 +41,18 @@ function ParryAttempt()
     game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("ParryAttempt"):FireServer(unpack(args))
 end
 
+function Clash()
+    spawn(function()
+        for i = 1, 5 do
+            spawn(function()
+                Parry()
+                ParryAttempt()
+                pressKey('F')
+            end)
+        end
+    end)
+end
+
 local Main = Window:AddTab('Main');
 local LSC1 = Main:AddLeftGroupbox("Auto");
 local RSC1 = Main:AddRightGroupbox("Visual");
@@ -207,15 +219,7 @@ uis.InputBegan:Connect(function(input, proc)
 
         while holding do
             game:GetService('RunService').Heartbeat:Wait()
-            spawn(function()
-                for i = 1, 5 do
-                    spawn(function()
-                        Parry()
-                        ParryAttempt()
-                        pressKey('F')
-                    end)
-                end
-            end)
+            Clash()
         end
     end
 end)
