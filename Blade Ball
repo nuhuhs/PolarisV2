@@ -147,7 +147,8 @@ local autoParry = LSC1:AddToggle('autoParry', {
                     spawn(function()
                         if real and real:GetAttribute('target') == client.Name then
                             if bb_defense then
-                                game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Freeze"):FireServer()
+                                game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Freeze")
+                                    :FireServer()
                             end
                         end
                     end)
@@ -172,18 +173,6 @@ local autoParry = LSC1:AddToggle('autoParry', {
                         spawn(function()
                             Parry()
                         end)
-
-                        local old = real;
-                        repeat
-                            Heartbeat:Wait()
-                            for _, v in pairs(workspace.Balls:GetChildren()) do
-                                if v:GetAttribute('realBall') or (v:GetAttribute('target') and v:GetAttribute('target') ~= '') then
-                                    real = v
-                                else
-                                    fake = v
-                                end
-                            end
-                        until real ~= old or real:GetAttribute('target') ~= client.Name
                     end
                 end
             end)
