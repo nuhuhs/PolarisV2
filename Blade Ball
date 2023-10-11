@@ -191,18 +191,18 @@ local autoParry = LSC1:AddToggle('autoParry', {
 
                         spawn(function()
                             if typeof(previousTarget) == 'model' then
-                                local pos = previousTarget:GetModelCFrame().p
-                                local dis = (hrp.Position - pos).Magnitude
+                                local pos3254 = previousTarget:GetModelCFrame().p
+                                local dis2 = (hrp.Position - pos3254).Magnitude
 
                                 local newTarget = previousTarget
 
-                                if dis <= 25 then
+                                if dis2 <= 25 then
                                     repeat
                                         Heartbeat:Wait()
-                                        pos = previousTarget:GetModelCFrame().p
-                                        dis = (hrp.Position - pos).Magnitude
+                                        pos3254 = previousTarget:GetModelCFrame().p
+                                        dis2 = (hrp.Position - pos).Magnitude
                                         Clash()
-                                    until dis >= 25 or previousTarget ~= newTarget
+                                    until dis2 >= 25 or previousTarget ~= newTarget
                                 else
                                     ParryAttempt()
                                 end
