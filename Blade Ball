@@ -117,7 +117,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
                         if (spX + spZ + spY) / parryTiming == 0 then
                             getgenv().bbMaxDis = 0;
                         else
-                            getgenv().bbMaxDis = math.clamp((spX + spZ + spY) / parryTiming, 0, 50);
+                            getgenv().bbMaxDis = math.clamp((spX + spZ + spY) / parryTiming, 0, math.huge);
                         end
                     end)
                 end)
