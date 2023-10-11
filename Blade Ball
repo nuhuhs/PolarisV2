@@ -182,7 +182,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
                             ParryAttempt()
                         end)
 
-                        
+
                         repeat
                             Heartbeat:Wait()
                             for _, v in pairs(workspace.Balls:GetChildren()) do
@@ -221,9 +221,11 @@ uis.InputBegan:Connect(function(input, proc)
             game:GetService('RunService').Heartbeat:Wait()
             spawn(function()
                 for i = 1, 5 do
-                    Parry()
-                    ParryAttempt()
-                    pressKey('F')
+                    spawn(function()
+                        Parry()
+                        ParryAttempt()
+                        pressKey('F')
+                    end)
                 end
             end)
         end
