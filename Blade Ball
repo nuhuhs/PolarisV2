@@ -203,7 +203,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
         getgenv().bb_AutoParry = Value
 
         while bb_AutoParry do
-            HeartBeat:Wait()
+            Heartbeat:Wait()
 
             local balls = GetBalls()
             local parryDis = GetSpeed() / 2.36
