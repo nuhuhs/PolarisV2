@@ -100,7 +100,7 @@ local function GetSpeed()
     local b2 = balls[2]
 
     if b1 and b2 and hrp then
-        local speed = b2:FindFirstChild('zoomies').VectorVelocity
+        local speed = b1:FindFirstChild('zoomies').VectorVelocity
         local spX = string.gsub(tostring(speed.X), '-', '')
         spX = tonumber(spX)
         local spZ = string.gsub(tostring(speed.Z), '-', '')
