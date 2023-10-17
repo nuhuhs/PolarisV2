@@ -1,6 +1,7 @@
 -- Blade Ball
 
 local abilities = {}
+getgenv().bb_clashCount = 0;
 
 if char:FindFirstChild('Abilities') then
     for i, v in pairs(char:FindFirstChild('Abilities'):GetChildren()) do
@@ -155,8 +156,20 @@ local function IsTarget()
 end
 
 local Part;
-getgenv().clashCounter = 1;
 
+local function GetClashColor()
+    local clash = bb_clashCount
+    local color = Color3.new(1, 1, 1)
+    if bb_clashCount <= 1 then
+        color = Color3.new(1, 1, 1);
+    elseif bb_clashCount == 2 then
+        color = Color3.new(1, .5, .5)
+    elseif bb_clashCount >= 3 then
+        color = Color3.new(1, 0, 0)
+    end
+
+    return color;
+end
 
 local visualizeRange = RSC1:AddToggle('visualizeRange', {
     Text = 'Visualize Parry Range',
@@ -185,17 +198,13 @@ local visualizeRange = RSC1:AddToggle('visualizeRange', {
                                 TweenInfo.new(.1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
                                 { Size = Vector3.new(s, s, s) }):Play();
 
-                            local clash = bb_clashCount or 1;
+                            local color = GetClashColor()
 
-                            if bb_autoClash then
+                            if color then
                                 game:GetService('TweenService'):Create(Part,
-                                    TweenInfo.new(.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
-                                    { Color = Color3.new(1, math.clamp(1 / clash, 0, 1), math.clamp(1 / clash, 0, 1)) })
+                                    TweenInfo.new(.2, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut),
+                                    { Color = color })
                                     :Play();
-                            else
-                                game:GetService('TweenService'):Create(Part,
-                                    TweenInfo.new(.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
-                                    { Color = Color3.new(1, 1, 1) }):Play();
                             end
                         end
                     else
@@ -234,7 +243,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
                     ParryAttempt()
                     local oldTick = tick();
                     local newTick = tick();
-                    spawn(function ()
+                    spawn(function()
                         bb_clashCount = bb_clashCount + 1
                         task.wait(.25)
                         bb_clashCount = bb_clashCount - 1
