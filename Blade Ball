@@ -46,9 +46,7 @@ function Clash()
     spawn(function()
         for i = 1, 5 do
             spawn(function()
-                Parry()
                 ParryAttempt()
-                pressKey('F')
             end)
         end
     end)
