@@ -223,40 +223,46 @@ local autoParry = LSC1:AddToggle('autoParry', {
                 local b1 = balls[1]
                 local b2 = balls[2]
 
-                b2:GetPropertyChangedSignal('Position'):Connect(function()
-                    local parryDis = GetSpeed() / 2.36
-                    local target = b1:GetAttribute('target')
-                    local name = client.Name
-                    local dis = GetParryDis()
+                local oldPos = b2.Position
+                if b2 then
+                    b2:GetPropertyChangedSignal('Position'):Connect(function()
+                        local parryDis = GetSpeed() / 2.36
+                        local target = b1:GetAttribute('target')
+                        local name = client.Name
+                        local dis = GetParryDis()
 
-                    spawn(function()
-                        if clashCounter <= .4 and autoClash then
-                            Clash()
-                        end
-                    end)
-
-                    if target == name then
                         spawn(function()
-                            if not TargetChanged then
-                                TargetChanged = true;
-
-                                if dis <= (parryDis * .75) then
-                                    clashCounter = clashCounter - .2
-                                    task.wait(.5)
-                                    clashCounter = clashCounter + .2
-                                end
+                            if clashCounter <= .4 and bb_autoClash then
+                                Clash()
                             end
                         end)
 
-                        if dis <= parryDis then
-                            ParryAttempt()
+                        if target == name then
+                            local newPos = b2.Position
+                            local newDis, oldDis = (newPos - hrp.Position).magnitude, (oldPos - hrp.Position).magnitude
+                            spawn(function()
+                                if not TargetChanged then
+                                    TargetChanged = true;
+
+                                    if dis <= (parryDis * .75) then
+                                        clashCounter = clashCounter - .2
+                                        task.wait(.5)
+                                        clashCounter = clashCounter + .2
+                                    end
+                                end
+                            end)
+
+                            if dis <= parryDis and (newDis < oldDis or (dis <= parryDis * .75)) then
+                                Parry()
+                            end
+                        else
+                            oldDis = b2.Position
+                            TargetChanged = false;
                         end
-                    else
-                        TargetChanged = false;
-                    end
-                end)
-            else
-                connection:Disconnect()
+                    end)
+                else
+                    connection:Disconnect()
+                end
             end
         end)
     end
