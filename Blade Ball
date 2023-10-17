@@ -111,7 +111,7 @@ local function GetSpeed()
         returnValue = (spX + spZ + (spY / 2));
     end
 
-    return returnValue;
+    return math.clamp(returnValue, 0, 100);
 end
 
 local function GetParryDis()
@@ -171,15 +171,23 @@ local visualizeRange = RSC1:AddToggle('visualizeRange', {
                         if hrp and GetBalls()[1] then
                             Part.CFrame = hrp.CFrame;
                             Part.CanCollide = false;
-                            local s = GetSpeed() or 0;
-                            Part.Size = Vector3.new(s, s, s)
+                            Part.CastShadow = false;
+                            local s = GetSpeed() / 2 or 0;
+                            game:GetService('TweenService'):Create(Part,
+                                TweenInfo.new(.25, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut),
+                                { Size = Vector3.new(s, s, s) }):Play();
 
                             local clash = clashCounter or 1;
 
                             if bb_autoClash then
-                                Part.Color = Color3.new(1, 1 / clash, 1 / clash)
+                                game:GetService('TweenService'):Create(Part,
+                                    TweenInfo.new(.5, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut),
+                                    { Color = Color3.new(1, math.clamp(1 / clash, 0, 1), math.clamp(1 / clash, 0, 1)) })
+                                    :Play();
                             else
-                                Part.Color = Color3.new(1, 1, 1)
+                                game:GetService('TweenService'):Create(Part,
+                                    TweenInfo.new(.5, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut),
+                                    { Color = Color3.new(1, 1, 1) }):Play();
                             end
                         end
                     else
@@ -207,46 +215,50 @@ local autoParry = LSC1:AddToggle('autoParry', {
     Callback = function(Value)
         getgenv().bb_AutoParry = Value
 
-        while bb_AutoParry do
-            Heartbeat:Wait()
+        local connection;
 
-            local balls = GetBalls()
-            local parryDis = GetSpeed() / 2.36
-            local target = GetTarget()
-            local name = client.Name
+        connection = game:GetService('Workspace').ChildAdded:Connect(function()
+            if bb_AutoParry then
+                local balls = GetBalls()
+                local b1 = balls[1]
+                local b2 = balls[2]
 
-            print(target)
+                b2:GetPropertyChangedSignal('Position'):Connect(function()
+                    local parryDis = GetSpeed() / 2.36
+                    local target = b1:GetAttribute('target')
+                    local name = client.Name
+                    local dis = GetParryDis()
 
-            if target == name then
-                spawn(function()
-                    if not TargetChanged then
-                        TargetChanged = true;
-
-                        if dis <= (parryDis * .75) then
-                            clashCounter = clashCounter - .2
-                            task.wait(.5)
-                            clashCounter = clashCounter + .2
+                    spawn(function()
+                        if clashCounter <= .4 and autoClash then
+                            Clash()
                         end
+                    end)
+
+                    if target == name then
+                        spawn(function()
+                            if not TargetChanged then
+                                TargetChanged = true;
+
+                                if dis <= (parryDis * .75) then
+                                    clashCounter = clashCounter - .2
+                                    task.wait(.5)
+                                    clashCounter = clashCounter + .2
+                                end
+                            end
+                        end)
+
+                        if dis <= parryDis then
+                            ParryAttempt()
+                        end
+                    else
+                        TargetChanged = false;
                     end
                 end)
-
-                spawn(function()
-                    if clashCounter <= .4 and autoClash then
-                        Clash()
-                    end
-                end)
-
-                local dis = GetParryDis()
-
-                print(dis .. ' / ' .. parryDis)
-
-                if dis <= parryDis then
-                    ParryAttempt()
-                end
             else
-                TargetChanged = false;
+                connection:Disconnect()
             end
-        end
+        end)
     end
 });
 
