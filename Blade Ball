@@ -254,7 +254,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
                                 end
                             end)
 
-                            print(newDis.. ' / '.. oldDis)
+                            print(newDis .. ' / ' .. oldDis)
 
                             if dis <= parryDis and (newDis <= oldDis or (dis <= parryDis * .75)) then
                                 Parry()
@@ -264,9 +264,9 @@ local autoParry = LSC1:AddToggle('autoParry', {
                             TargetChanged = false;
                         end
                     end)
-                else
-                    connection:Disconnect()
                 end
+            else
+                connection:Disconnect()
             end
         end)
     end
