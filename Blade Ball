@@ -174,7 +174,7 @@ local visualizeRange = RSC1:AddToggle('visualizeRange', {
                             Part.CastShadow = false;
                             local s = GetSpeed() / 2 or 0;
                             game:GetService('TweenService'):Create(Part,
-                                TweenInfo.new(.25, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
+                                TweenInfo.new(.1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
                                 { Size = Vector3.new(s, s, s) }):Play();
 
                             local clash = clashCounter or 1;
@@ -226,9 +226,10 @@ local autoParry = LSC1:AddToggle('autoParry', {
 
                 if b2 then
                     local oldPos = b2.Position
+                    local oldDis = (oldPos - hrp.Position).magnitude
                     b2:GetPropertyChangedSignal('Position'):Connect(function()
                         local parryDis = GetSpeed() / 2.36
-                        local target = b1:GetAttribute('target')
+                        local target = GetTarget()
                         local name = client.Name
                         local dis = GetParryDis()
 
@@ -240,7 +241,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
 
                         if target == name then
                             local newPos = b2.Position
-                            local newDis, oldDis = (newPos - hrp.Position).magnitude, (oldPos - hrp.Position).magnitude
+                            local newDis = (newPos - hrp.Position).magnitude
                             spawn(function()
                                 if not TargetChanged then
                                     TargetChanged = true;
@@ -253,7 +254,9 @@ local autoParry = LSC1:AddToggle('autoParry', {
                                 end
                             end)
 
-                            if dis <= parryDis and (newDis < oldDis or (dis <= parryDis * .75)) then
+                            print(newDis.. ' / '.. oldDis)
+
+                            if dis <= parryDis and (newDis <= oldDis or (dis <= parryDis * .75)) then
                                 Parry()
                             end
                         else
