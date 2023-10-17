@@ -125,7 +125,7 @@ local function GetParryDis()
     local speed = GetSpeed() / 2.36
 
     if b1 and b2 and hrp and speed then
-        returnValue = (b1.Position - hrp.Position).magnitude
+        returnValue = (b2.Position - hrp.Position).magnitude
     end
 
     return returnValue;
@@ -140,7 +140,7 @@ local function GetTarget()
     local b2 = balls[2]
 
     if b1 and b2 and hrp then
-        returnValue = b2:GetAttribute('target');
+        returnValue = b1:GetAttribute('target');
     end
 
     return returnValue;
@@ -169,8 +169,10 @@ local visualizeRange = RSC1:AddToggle('visualizeRange', {
                 connection = RunService.RenderStepped:Connect(function()
                     if visualizeRange then
                         if hrp and GetBalls()[1] then
-                            Part.CFrame = hrp.CFrame 
-                            Part.Size = GetSpeed() or 5
+                            Part.CFrame = hrp.CFrame;
+                            Part.CanCollide = false;
+                            local s = GetSpeed() or 0;
+                            Part.Size = Vector3.new(s, s, s)
 
                             local clash = clashCounter or 1;
 
@@ -182,9 +184,16 @@ local visualizeRange = RSC1:AddToggle('visualizeRange', {
                         end
                     else
                         connection:Disconnect()
+                        if Part then
+                            Part:Destroy()
+                        end
                     end
                 end)
             end)
+        else
+            if Part then
+                Part:Destroy()
+            end
         end
     end
 });
@@ -229,7 +238,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
 
                 local dis = GetParryDis()
 
-                print(dis..' / '.. parryDis)
+                print(dis .. ' / ' .. parryDis)
 
                 if dis <= parryDis then
                     ParryAttempt()
