@@ -146,6 +146,14 @@ local function GetTarget()
     return returnValue;
 end
 
+local function IsTarget()
+    if GetTarget() == client.Name then
+        return true;
+    else
+        return false;
+    end
+end
+
 local Part;
 getgenv().clashCounter = 1;
 
@@ -215,60 +223,24 @@ local autoParry = LSC1:AddToggle('autoParry', {
     Callback = function(Value)
         getgenv().bb_AutoParry = Value
 
-        local connection;
+        while bb_AutoParry do
+            Heartbeat:Wait()
 
-        connection = game:GetService('Workspace').ChildAdded:Connect(function()
-            if bb_AutoParry then
-                local balls = GetBalls()
-                local b1 = balls[1]
-                local b2 = balls[2]
+            if IsTarget() then
+                local dis = GetParryDis()
+                local maxDis = GetSpeed() / 2.36
 
-
-                if b2 then
-                    local oldPos = b2.Position
-                    local oldDis = (oldPos - hrp.Position).magnitude
-                    b2:GetPropertyChangedSignal('Position'):Connect(function()
-                        local parryDis = GetSpeed() / 2.36
-                        local target = GetTarget()
-                        local name = client.Name
-                        local dis = GetParryDis()
-
-                        spawn(function()
-                            if clashCounter <= .4 and bb_autoClash then
-                                Clash()
-                            end
-                        end)
-
-                        if target == name then
-                            local newPos = b2.Position
-                            local newDis = (newPos - hrp.Position).magnitude
-                            spawn(function()
-                                if not TargetChanged then
-                                    TargetChanged = true;
-
-                                    if dis <= (parryDis * .75) then
-                                        clashCounter = clashCounter - .2
-                                        task.wait(.5)
-                                        clashCounter = clashCounter + .2
-                                    end
-                                end
-                            end)
-
-                            print(newDis .. ' / ' .. oldDis)
-
-                            if dis <= parryDis and (newDis <= oldDis or (dis <= parryDis * .75)) then
-                                Parry()
-                            end
-                        else
-                            oldDis = b2.Position
-                            TargetChanged = false;
-                        end
-                    end)
+                if dis <= maxDis then
+                    ParryAttempt()
+                    local oldTick = tick();
+                    local newTick = tick();
+                    repeat
+                        wait()
+                        newTick = tick()
+                    until not IsTarget() or (oldTick - newTick >= 60)
                 end
-            else
-                connection:Disconnect()
             end
-        end)
+        end
     end
 });
 
