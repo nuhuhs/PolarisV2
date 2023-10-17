@@ -203,6 +203,8 @@ local autoParry = LSC1:AddToggle('autoParry', {
             local target = GetTarget()
             local name = client.Name
 
+            print(target)
+
             if target == name then
                 spawn(function()
                     if not TargetChanged then
@@ -217,12 +219,14 @@ local autoParry = LSC1:AddToggle('autoParry', {
                 end)
 
                 spawn(function()
-                    if clashCounter <= .4 then
+                    if clashCounter <= .4 and autoClash then
                         Clash()
                     end
                 end)
 
                 local dis = GetParryDis()
+
+                print(dis..' / '.. parryDis)
 
                 if dis <= parryDis then
                     ParryAttempt()
