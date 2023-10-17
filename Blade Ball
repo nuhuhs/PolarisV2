@@ -245,7 +245,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
                     local newTick = tick();
                     spawn(function()
                         bb_clashCount = bb_clashCount + 1
-                        task.wait(.25)
+                        task.wait(1)
                         bb_clashCount = bb_clashCount - 1
                     end)
 
