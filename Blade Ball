@@ -223,8 +223,9 @@ local autoParry = LSC1:AddToggle('autoParry', {
                 local b1 = balls[1]
                 local b2 = balls[2]
 
-                local oldPos = b2.Position
+
                 if b2 then
+                    local oldPos = b2.Position
                     b2:GetPropertyChangedSignal('Position'):Connect(function()
                         local parryDis = GetSpeed() / 2.36
                         local target = b1:GetAttribute('target')
