@@ -169,6 +169,9 @@ local visualizeRange = RSC1:AddToggle('visualizeRange', {
                 connection = RunService.RenderStepped:Connect(function()
                     if visualizeRange then
                         if hrp and GetBalls()[1] then
+                            Part.CFrame = hrp.CFrame 
+                            Part.Size = GetSpeed() or 5
+
                             local clash = clashCounter or 1;
 
                             if bb_autoClash then
