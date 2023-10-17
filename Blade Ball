@@ -185,7 +185,7 @@ local visualizeRange = RSC1:AddToggle('visualizeRange', {
                                 TweenInfo.new(.1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
                                 { Size = Vector3.new(s, s, s) }):Play();
 
-                            local clash = clashCounter or 1;
+                            local clash = bb_clashCount or 1;
 
                             if bb_autoClash then
                                 game:GetService('TweenService'):Create(Part,
@@ -234,6 +234,12 @@ local autoParry = LSC1:AddToggle('autoParry', {
                     ParryAttempt()
                     local oldTick = tick();
                     local newTick = tick();
+                    spawn(function ()
+                        bb_clashCount = bb_clashCount + 1
+                        task.wait(.25)
+                        bb_clashCount = bb_clashCount - 1
+                    end)
+
                     repeat
                         wait()
                         newTick = tick()
@@ -252,5 +258,12 @@ local autoClash = LSC1:AddToggle('autoClash', {
 
     Callback = function(Value)
         getgenv().bb_autoClash = Value
+
+        while bb_autoClash do
+            Heartbeat:Wait()
+            if bb_clashCount >= 3 then
+                Clash()
+            end
+        end
     end
 });
