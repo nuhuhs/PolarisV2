@@ -77,6 +77,79 @@ local iced_bbv2 = RSC2:AddToggle('iced_bbv2', {
     end
 });
 
+local function GetBalls()
+    local real;
+    local fake;
+
+    for _, v in pairs(workspace.Balls:GetChildren()) do
+        if v:GetAttribute('realBall') or (v:GetAttribute('target') and v:GetAttribute('target') ~= '') then
+            real = v
+        else
+            fake = v
+        end
+    end
+    return { real, fake }
+end
+
+local function GetSpeed()
+    local returnValue = 0;
+
+    local balls = GetBalls()
+
+    local b1 = balls[1]
+    local b2 = balls[2]
+
+    if b1 and b2 and hrp then
+        local speed = b2:FindFirstChild('zoomies').VectorVelocity
+        local spX = string.gsub(tostring(speed.X), '-', '')
+        spX = tonumber(spX)
+        local spZ = string.gsub(tostring(speed.Z), '-', '')
+        spZ = tonumber(spZ)
+        local spY = string.gsub(tostring(speed.Y), '-', '')
+        spY = tonumber(spY)
+
+        returnValue = (spX + spZ + (spY / 2));
+    end
+
+    return returnValue;
+end
+
+local function GetParryDis()
+    local returnValue = 0;
+
+    local balls = GetBalls()
+
+    local b1 = balls[1]
+    local b2 = balls[2]
+
+    local speed = GetSpeed() / 2.36
+
+    if b1 and b2 and hrp and speed then
+        returnValue = (b1.Position - hrp.Position).magnitude
+    end
+
+    return returnValue;
+end
+
+local function GetTarget()
+    local returnValue;
+
+    local balls = GetBalls()
+
+    local b1 = balls[1]
+    local b2 = balls[2]
+
+    if b1 and b2 and hrp then
+        returnValue = b2:GetAttribute('target');
+    end
+
+    return returnValue;
+end
+
+local Part;
+getgenv().clashCounter = 1;
+
+
 local visualizeRange = RSC1:AddToggle('visualizeRange', {
     Text = 'Visualize Parry Range',
     Default = false,
@@ -85,32 +158,43 @@ local visualizeRange = RSC1:AddToggle('visualizeRange', {
         getgenv().visualizeRange = Value
 
         if visualizeRange then
-            getgenv().visualizedBall = Instance.new('Part')
-            visualizedBall.CFrame = hrp.CFrame
-            visualizedBall.Anchored = true
-            visualizedBall.Parent = workspace
-            visualizedBall.CanCollide = false
-            visualizedBall.Transparency = 0.85
-            visualizedBall.CastShadow = false
-            visualizedBall.Material = Enum.Material.ForceField
+            Part = Instance.new('Part')
+            Part.Parent = workspace
+            Part.Shape = Enum.PartType.Ball
+            Part.Material = Enum.Material.ForceField
+            Part.Transparency = .2
+            spawn(function()
+                local connection;
 
-            while visualizedBall and visualizeRange and hrp do
-                RunService.Heartbeat:Wait()
-                local bbMaxDis = bbMaxDis or 20
-                local md = bbMaxDis or 0
-                visualizedBall.Size = Vector3.new(md, md, md)
-                visualizedBall.CFrame = hrp.CFrame
-            end
-        else
-            if visualizedBall then
-                visualizedBall:Destroy()
-            end
+                connection = RunService.RenderStepped:Connect(function()
+                    if visualizeRange then
+                        if hrp and GetBalls()[1] then
+                            local clash = clashCounter or 1;
+
+                            if bb_autoClash then
+                                Part.Color = Color3.new(1, 1 / clash, 1 / clash)
+                            else
+                                Part.Color = Color3.new(1, 1, 1)
+                            end
+                        end
+                    else
+                        connection:Disconnect()
+                    end
+                end)
+            end)
         end
     end
 });
 
-local bbPBdb = false;
-getgenv().parryTiming = 2.36
+local autoClash = LSC1:AddToggle('autoClash', {
+    Text = 'Auto Clash',
+    Default = false,
+
+    Callback = function(Value)
+        getgenv().bb_autoClash = Value
+    end
+});
+
 local autoParry = LSC1:AddToggle('autoParry', {
     Text = 'Auto Parry',
     Default = false,
@@ -119,198 +203,40 @@ local autoParry = LSC1:AddToggle('autoParry', {
         getgenv().bb_AutoParry = Value
 
         while bb_AutoParry do
-            pcall(function()
-                Heartbeat:Wait()
-                local real;
-                local fake;
+            HeartBeat:Wait()
 
-                for _, v in pairs(workspace.Balls:GetChildren()) do
-                    if v:GetAttribute('realBall') or (v:GetAttribute('target') and v:GetAttribute('target') ~= '') then
-                        real = v
-                    else
-                        fake = v
-                    end
-                end
+            local balls = GetBalls()
+            local parryDis = GetSpeed() / 2.36
+            local target = GetTarget()
+            local name = client.Name
 
+            if target == name then
                 spawn(function()
-                    pcall(function()
-                        local speed = real:FindFirstChild('zoomies').VectorVelocity
-                        local spX = string.gsub(tostring(speed.X), '-', '')
-                        spX = tonumber(spX)
-                        local spZ = string.gsub(tostring(speed.Z), '-', '')
-                        spZ = tonumber(spZ)
-                        local spY = string.gsub(tostring(speed.Y), '-', '')
-                        spY = tonumber(spY)
-                        if (spX + spZ + spY) / parryTiming == 0 then
-                            getgenv().bbMaxDis = 0;
-                        else
-                            getgenv().bbMaxDis = (spX + spZ + spY) / parryTiming;
-                        end
-                    end)
-                end)
+                    if not TargetChanged then
+                        TargetChanged = true;
 
-                local dis = (fake.Position - hrp.Position).Magnitude
-                spawn(function()
-                    spawn(function()
-                        if real and real:GetAttribute('target') == client.Name then
-                            if bb_defense then
-                                game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Freeze")
-                                    :FireServer()
-                            end
-                        else
-                            spawn(function()
-                                if real and players:FindFirstChild(real:GetAttribute('target')) then
-                                    if players:FindFirstChild(real:GetAttribute('target')).Character then
-                                        getgenv().previousTarget = players:FindFirstChild(real:GetAttribute('target'))
-                                            .Character
-                                    else
-                                        getgenv().previousTarget = players:FindFirstChild(real:GetAttribute('target'))
-                                    end
-                                end
-                            end)
-                        end
-                    end)
-                    if (dis <= bbMaxDis * 1.25) then
-                        if real and real:GetAttribute('target') == client.Name then
-                            if autoSwap then
-                                pressKey('Q')
-                            end
+                        if dis <= (parryDis * .75) then
+                            clashCounter = clashCounter - .2
+                            task.wait(.5)
+                            clashCounter = clashCounter + .2
                         end
                     end
                 end)
 
-                if (dis <= bbMaxDis) then
-                    if real and real:GetAttribute('target') == client.Name then
-                        spawn(function()
-                            if bb_autoRaging then
-                                game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild(
-                                    "PlrRagingDeflectiond"):FireServer()
-                            end
-                        end)
-                        local old = real;
-
-                        spawn(function()
-                            if typeof(previousTarget) == 'model' then
-                                local pos3254 = previousTarget:GetModelCFrame().p
-                                local dis2 = (hrp.Position - pos3254).Magnitude
-
-                                local newTarget = previousTarget
-
-                                if dis2 <= 25 then
-                                    repeat
-                                        Heartbeat:Wait()
-                                        pos3254 = previousTarget:GetModelCFrame().p
-                                        dis2 = (hrp.Position - pos).Magnitude
-                                        Clash()
-                                    until dis2 >= 25 or previousTarget ~= newTarget
-                                else
-                                    ParryAttempt()
-                                end
-                            else
-                                ParryAttempt()
-                            end
-                        end)
-
-
-                        repeat
-                            Heartbeat:Wait()
-                            for _, v in pairs(workspace.Balls:GetChildren()) do
-                                if v:GetAttribute('realBall') or (v:GetAttribute('target') and v:GetAttribute('target') ~= '') then
-                                    real = v
-                                else
-                                    fake = v
-                                end
-                            end
-                        until real ~= old or real:GetAttribute('target') ~= client.Name
+                spawn(function()
+                    if clashCounter <= .4 then
+                        Clash()
                     end
+                end)
+
+                local dis = GetParryDis()
+
+                if dis <= parryDis then
+                    ParryAttempt()
                 end
-            end)
-        end
-    end
-});
-
-local autoSpam = LSC1:AddToggle('autoSpam', {
-    Text = 'Auto Spam Parry (Hold E)',
-    Default = false,
-
-    Callback = function(Value)
-        getgenv().autoSpam = Value
-    end
-});
-
-local holding = false;
-local uis = game:GetService('UserInputService');
-local key = "E";
-
-uis.InputBegan:Connect(function(input, proc)
-    if input.KeyCode == Enum.KeyCode[key] and not proc and autoSpam then
-        holding = true;
-
-        while holding do
-            game:GetService('RunService').Heartbeat:Wait()
-            Clash()
-        end
-    end
-end)
-
-uis.InputEnded:Connect(function(input, proc)
-    if input.KeyCode == Enum.KeyCode[key] and not proc then
-        holding = false;
-    end
-end)
-
-local autoCounter = LSC1:AddToggle('autoSwap', {
-    Text = 'Auto Swap (Requires Swap Equip)',
-    Default = false,
-
-    Callback = function(Value)
-        getgenv().autoSwap = Value
-    end
-});
-
-local autoRage = LSC1:AddToggle('autoRage', {
-    Text = 'Auto Raging',
-    Default = false,
-
-    Callback = function(Value)
-        getgenv().bb_autoRaging = Value
-    end
-});
-
-
-LSC1:AddSlider('parryTiming', {
-    Text = 'Parrying Timing',
-    Default = 2,
-    Min = 1,
-    Max = 5,
-    Rounding = 2,
-    Compact = false,
-
-    Callback = function(Value)
-        getgenv().parryTiming = Value
-    end
-})
-
-local tpSafeBB = LSC1:AddToggle('tpSafeBB', {
-    Text = 'TP Safely',
-    Default = false,
-    Callback = function(Value)
-        getgenv().tpSafeBB = Value
-
-        while tpSafeBB do
-            Heartbeat:Wait()
-
-            hrp.CFrame = CFrame.new(-275.167419, 200, -69.5898285)
-
-            local noFall = Instance.new('BodyVelocity')
-            noFall.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-            noFall.Velocity = Vector3.new(0, 0, 0)
-            noFall.Parent = hrp
-
-            spawn(function()
-                wait(1)
-                noFall:Destroy()
-            end)
+            else
+                TargetChanged = false;
+            end
         end
     end
 });
