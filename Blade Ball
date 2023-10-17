@@ -186,14 +186,7 @@ local visualizeRange = RSC1:AddToggle('visualizeRange', {
     end
 });
 
-local autoClash = LSC1:AddToggle('autoClash', {
-    Text = 'Auto Clash',
-    Default = false,
-
-    Callback = function(Value)
-        getgenv().bb_autoClash = Value
-    end
-});
+local TargetChanged = false;
 
 local autoParry = LSC1:AddToggle('autoParry', {
     Text = 'Auto Parry',
@@ -238,5 +231,16 @@ local autoParry = LSC1:AddToggle('autoParry', {
                 TargetChanged = false;
             end
         end
+    end
+});
+
+LSC1:AddDivider()
+
+local autoClash = LSC1:AddToggle('autoClash', {
+    Text = 'Auto Clash',
+    Default = false,
+
+    Callback = function(Value)
+        getgenv().bb_autoClash = Value
     end
 });
