@@ -60,23 +60,38 @@ function ParryAttempt()
 end
 
 local function BugBall()
-    local function GetPlayer()
+    local function GetRandomNumber()
+        local Amount = math.random(6, 9)
+        local number = "";
+
+        for i = 1, Amount do
+            local random = tostring(math.random(0, 9));
+
+            local number = number .. random
+        end
+
+        return tonumber(number)
+    end
+
+    local function GetPlayerList()
+        local PlayerList = {};
+
         for i, v in next, (game:GetService('Players'):GetPlayers()) do
             if v ~= client and v.Character and v.Character:FindFirstChild('Head') and v.Character.Parent == workspace:FindFirstChild('Alive') then
-                return v.Character.Head;
+                PlayerList[GetRandomNumber()] = v.Character:FindFirstChild('Head');
             end
         end
+
+        return PlayerList;
     end
 
     local args = {
         [1] = .5,
         [2] = hrp.CFrame,
-        [3] = {
-            [4651357447] = GetPlayer()
-        },
+        [3] = GetPlayerList,
         [4] = {
-            [1] = 960,
-            [2] = 504
+            [1] = 0,
+            [2] = 0
         }
     }
 
