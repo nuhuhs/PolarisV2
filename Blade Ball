@@ -63,7 +63,7 @@ local function BugBall()
     local function GetPlayer()
         for i, v in next, (game:GetService('Players'):GetPlayers()) do
             if v ~= client and v.Character and v.Character:FindFirstChild('Head') and v.Character.Parent == workspace:FindFirstChild('Alive') then
-                return v.Character.HumanoidRootPart;
+                return v.Character.Head;
             end
         end
     end
