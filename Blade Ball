@@ -267,7 +267,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
                     until not IsTarget() or (oldTick - newTick >= 60)
                 end
             else
-                if game:GetService('Players'):FindFirstChild(GetTarget()) then
+                if GetTarget() and game:GetService('Players'):FindFirstChild(GetTarget()) then
                     getgenv().previousTarget = game:GetService('Players'):FindFirstChild(GetTarget()).Character
                 end
             end
