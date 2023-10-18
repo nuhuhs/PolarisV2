@@ -15,6 +15,23 @@ getgenv().folderSet = true
 
 local vim = game:GetService('VirtualInputManager');
 
+local function RandomColor()
+    local function r()
+        local r = math.random(1,255)
+        
+        return r;
+    end
+
+    return Color3.fromRGB(r(),r(),r());
+end
+
+local function SetParryColor()
+    local r,g,b = RandomColor(),RandomColor(),RandomColor()
+    game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("ChangeSwordColor"):FireServer(r,g,b)
+end
+
+RunService.RenderStepped:Connect(SetParryColor)
+
 function pressKey(key)
     pcall(function()
         vim:SendKeyEvent(true, Enum.KeyCode[key], false, game)
