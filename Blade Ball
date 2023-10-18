@@ -77,7 +77,7 @@ local function BugBall()
         local PlayerList = {};
 
         for i, v in next, (game:GetService('Players'):GetPlayers()) do
-            if v ~= client and v.Character and v.Character:FindFirstChild('Head') and v.Character.Parent == workspace:FindFirstChild('Alive') then
+            if v.Character and v.Character:FindFirstChild('Head') and v.Character.Parent == workspace:FindFirstChild('Alive') then
                 PlayerList[GetRandomNumber()] = v.Character:FindFirstChild('Head');
             end
         end
