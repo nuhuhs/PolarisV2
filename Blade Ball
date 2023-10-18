@@ -286,7 +286,7 @@ local autoClash = LSC1:AddToggle('autoClash', {
 
         while bb_autoClash do
             Heartbeat:Wait()
-            spaawn(function()
+            spawn(function()
                 if bb_clashCount >= 3 then
                     Clash()
                 end
