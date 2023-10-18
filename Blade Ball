@@ -238,19 +238,37 @@ local autoParry = LSC1:AddToggle('autoParry', {
                 local maxDis = GetSpeed() / 2.36
 
                 if dis <= maxDis then
-                    Parry()
+                    ParryAttempt()
                     local oldTick = tick();
                     local newTick = tick();
                     spawn(function()
-                        bb_clashCount = bb_clashCount + 1
-                        task.wait(1)
-                        bb_clashCount = bb_clashCount - 1
+                        if previousTarget then
+                            local targetDis = (previousTarget:GetModelCFrame().Position - hrp.Position).magnitude
+
+                            if targetDis <= 15 then
+                                bb_clashCount = bb_clashCount + 2
+                                task.wait(1)
+                                bb_clashCount = bb_clashCount - 2
+                            else
+                                bb_clashCount = bb_clashCount + 1
+                                task.wait(1)
+                                bb_clashCount = bb_clashCount - 1
+                            end
+                        else
+                            bb_clashCount = bb_clashCount + 1
+                            task.wait(1)
+                            bb_clashCount = bb_clashCount - 1
+                        end
                     end)
 
                     repeat
                         wait()
                         newTick = tick()
                     until not IsTarget() or (oldTick - newTick >= 60)
+                end
+            else
+                if game:GetService('Players'):FindFirstChild(GetTarget()) then
+                    getgenv().previousTarget = game:GetService('Players'):FindFirstChild(GetTarget()).Character
                 end
             end
         end
