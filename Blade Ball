@@ -110,7 +110,7 @@ local function GetSpeed()
         returnValue = (spX + spZ + (spY / 2));
     end
 
-    return math.clamp(returnValue, 0, 100);
+    return math.clamp(returnValue, 0, 250);
 end
 
 local function GetParryDis()
