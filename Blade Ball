@@ -281,6 +281,8 @@ local autoParry = LSC1:AddToggle('autoParry', {
                     repeat
                         wait()
                         newTick = tick()
+                        print(newTick)
+                        print(oldTick)
                     until not IsTarget() or (oldTick - newTick >= 60)
                 end
             else
