@@ -1,7 +1,5 @@
 -- Blade Ball
 
-Library:Notify('Loaded Blade Ball V.1')
-
 local abilities = {}
 getgenv().bb_clashCount = 0;
 
@@ -19,17 +17,17 @@ local vim = game:GetService('VirtualInputManager');
 
 local function RandomColor()
     local function r()
-        local r = math.random(1, 255)
-
+        local r = math.random(1,255)
+        
         return r;
     end
 
-    return Color3.fromRGB(r(), r(), r());
+    return Color3.fromRGB(r(),r(),r());
 end
 
 local function SetParryColor()
-    local r, g, b = RandomColor(), RandomColor(), RandomColor()
-    game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("ChangeSwordColor"):FireServer(r, g, b)
+    local r,g,b = RandomColor(),RandomColor(),RandomColor()
+    game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("ChangeSwordColor"):FireServer(r,g,b)
 end
 
 RunService.RenderStepped:Connect(SetParryColor)
@@ -59,45 +57,6 @@ function ParryAttempt()
     }
 
     game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("ParryAttempt"):FireServer(unpack(args))
-end
-
-local function BugBall()
-    local function GetRandomNumber()
-        local Amount = math.random(8, 9)
-        local number = "";
-
-        for i = 1, Amount do
-            local random = tostring(math.random(0, 9));
-
-            number = number .. random
-        end
-
-        return tonumber(number)
-    end
-
-    local function GetPlayerList()
-        local PlayerList = {};
-
-        for i, v in next, (game:GetService('Players'):GetPlayers()) do
-            if v.Character and v.Character:FindFirstChild('Head') and v.Character.Parent == workspace:FindFirstChild('Alive') then
-                PlayerList[GetRandomNumber()] = v.Character:FindFirstChild('Head');
-            end
-        end
-
-        return PlayerList;
-    end
-
-    local args = {
-        [1] = .5,
-        [2] = hrp.CFrame,
-        [3] = GetPlayerList(),
-        [4] = {
-            [1] = 960,
-            [2] = 504
-        }
-    }
-
-    game:GetService("ReplicatedStorage").Remotes.ParryAttempt:FireServer(unpack(args))
 end
 
 function Clash()
@@ -296,14 +255,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
                 local maxDis = GetSpeed()
 
                 if dis <= maxDis then
-                    spawn(function()
-                        if not bb_bugBall then
-                            Parry()
-                        else
-                            BugBall()
-                        end
-                    end)
-
+                    Parry()
                     local oldTick = tick();
                     local newTick = tick();
                     spawn(function()
@@ -329,7 +281,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
                     repeat
                         wait()
                         newTick = tick()
-                    until not IsTarget() or (oldTick - newTick >= 1 / 60)
+                    until not IsTarget() or (oldTick - newTick >= 1/60)
                 end
             else
                 if GetTarget() and game:GetService('Players'):FindFirstChild(GetTarget()) then
