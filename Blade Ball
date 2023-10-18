@@ -61,7 +61,7 @@ end
 
 local function BugBall()
     local function GetRandomNumber()
-        local Amount = math.random(6, 9)
+        local Amount = math.random(8, 9)
         local number = "";
 
         for i = 1, Amount do
