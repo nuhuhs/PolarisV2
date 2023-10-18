@@ -311,7 +311,7 @@ uis.InputBegan:Connect(function(input, IsTyping)
     if not IsTyping and input.KeyCode == Enum.KeyCode.E then
         IsHolding = true;
 
-        while IsHolding do
+        while IsHolding and bb_manualClash do
             Heartbeat:Wait()
             spawn(function()
                 Clash()
