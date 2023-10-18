@@ -235,10 +235,10 @@ local autoParry = LSC1:AddToggle('autoParry', {
 
             if IsTarget() then
                 local dis = GetParryDis()
-                local maxDis = GetSpeed() / 2.36
+                local maxDis = GetSpeed() / 2
 
                 if dis <= maxDis then
-                    ParryAttempt()
+                    Parry()
                     local oldTick = tick();
                     local newTick = tick();
                     spawn(function()
@@ -294,3 +294,34 @@ local autoClash = LSC1:AddToggle('autoClash', {
         end
     end
 });
+
+local manualClash = LSC1:AddToggle('manualClash', {
+    Text = 'Manual Clash (HOLD E)',
+    Default = false,
+
+    Callback = function(Value)
+        getgenv().bb_manualClash = Value
+    end
+});
+
+local uis = game:GetService('UserInputService');
+local IsHolding = false;
+
+uis.InputBegan:Connect(function(input, IsTyping)
+    if not IsTyping and input.KeyCode == Enum.KeyCode.E then
+        IsHolding = true;
+
+        while IsHolding do
+            Heartbeat:Wait()
+            spawn(function()
+                Clash()
+            end)
+        end
+    end
+end)
+
+uis.InputEnded:Connect(function(input, IsTyping)
+    if not IsTyping and input.KeyCode == Enum.KeyCode.E then
+        IsHolding = false;
+    end
+end)
