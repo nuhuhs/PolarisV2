@@ -110,7 +110,7 @@ local function GetSpeed()
         returnValue = (spX + spZ + (spY / 2));
     end
 
-    return math.clamp(returnValue, 0, 250);
+    return math.clamp(returnValue / 2.36, 0, 200);
 end
 
 local function GetParryDis()
@@ -121,7 +121,7 @@ local function GetParryDis()
     local b1 = balls[1]
     local b2 = balls[2]
 
-    local speed = GetSpeed() / 2.36
+    local speed = GetSpeed()
 
     if b1 and b2 and hrp and speed then
         returnValue = (b2.Position - hrp.Position).magnitude
@@ -191,7 +191,7 @@ local visualizeRange = RSC1:AddToggle('visualizeRange', {
                             Part.CFrame = hrp.CFrame;
                             Part.CanCollide = false;
                             Part.CastShadow = false;
-                            local s = GetSpeed() / 2 or 0;
+                            local s = math.clamp(GetSpeed(), 0, 72.5) or 0;
                             game:GetService('TweenService'):Create(Part,
                                 TweenInfo.new(.1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
                                 { Size = Vector3.new(s, s, s) }):Play();
@@ -235,7 +235,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
 
             if IsTarget() then
                 local dis = GetParryDis()
-                local maxDis = GetSpeed() / 2
+                local maxDis = GetSpeed()
 
                 if dis <= maxDis then
                     Parry()
@@ -245,7 +245,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
                         if previousTarget then
                             local targetDis = (previousTarget:GetModelCFrame().Position - hrp.Position).magnitude
 
-                            if targetDis <= 15 then
+                            if targetDis <= maxDis / 5 then
                                 bb_clashCount = bb_clashCount + 2
                                 task.wait(1)
                                 bb_clashCount = bb_clashCount - 2
