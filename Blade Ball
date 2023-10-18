@@ -340,15 +340,6 @@ local autoParry = LSC1:AddToggle('autoParry', {
     end
 });
 
-local BugBall = LSC1:AddToggle('BugBall', {
-    Text = 'Explode Ball On Parry',
-    Default = false,
-
-    Callback = function(Value)
-        getgenv().bb_bugBall = Value
-    end
-});
-
 LSC1:AddDivider()
 
 local autoClash = LSC1:AddToggle('autoClash', {
