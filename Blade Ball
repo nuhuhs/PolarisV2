@@ -17,17 +17,17 @@ local vim = game:GetService('VirtualInputManager');
 
 local function RandomColor()
     local function r()
-        local r = math.random(1,255)
-        
+        local r = math.random(1, 255)
+
         return r;
     end
 
-    return Color3.fromRGB(r(),r(),r());
+    return Color3.fromRGB(r(), r(), r());
 end
 
 local function SetParryColor()
-    local r,g,b = RandomColor(),RandomColor(),RandomColor()
-    game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("ChangeSwordColor"):FireServer(r,g,b)
+    local r, g, b = RandomColor(), RandomColor(), RandomColor()
+    game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("ChangeSwordColor"):FireServer(r, g, b)
 end
 
 RunService.RenderStepped:Connect(SetParryColor)
@@ -175,11 +175,11 @@ local Part;
 local function GetClashColor()
     local clash = bb_clashCount
     local color = Color3.new(1, 1, 1)
-    if bb_clashCount <= 1 then
+    if clash <= 1 then
         color = Color3.new(1, 1, 1);
-    elseif bb_clashCount == 2 then
+    elseif clash == 2 then
         color = Color3.new(1, .5, .5)
-    elseif bb_clashCount >= 3 then
+    elseif clash >= 3 then
         color = Color3.new(1, 0, 0)
     end
 
@@ -260,7 +260,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
                     local newTick = tick();
                     spawn(function()
                         if previousTarget then
-                            local newMax = math.clamp(GetSpeed(), 0, 72.5)
+                            local newMax = math.clamp(GetSpeed() / 2, 0, 50)
                             local targetDis = (previousTarget:GetModelCFrame().Position - hrp.Position).magnitude
 
                             if targetDis <= newMax then
@@ -282,7 +282,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
                     repeat
                         wait()
                         newTick = tick()
-                    until not IsTarget() or (oldTick - newTick >= 1/60)
+                    until not IsTarget() or (oldTick - newTick >= 1 / 60)
                 end
             else
                 if GetTarget() and game:GetService('Players'):FindFirstChild(GetTarget()) then
