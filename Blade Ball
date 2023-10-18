@@ -1,5 +1,7 @@
 -- Blade Ball
 
+Library:Notify('Updated Version Loaded!')
+
 local abilities = {}
 getgenv().bb_clashCount = 0;
 
