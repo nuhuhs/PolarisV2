@@ -88,7 +88,7 @@ local function BugBall()
     local args = {
         [1] = .5,
         [2] = hrp.CFrame,
-        [3] = GetPlayerList,
+        [3] = GetPlayerList(),
         [4] = {
             [1] = 0,
             [2] = 0
