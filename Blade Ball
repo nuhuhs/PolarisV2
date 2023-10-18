@@ -260,9 +260,10 @@ local autoParry = LSC1:AddToggle('autoParry', {
                     local newTick = tick();
                     spawn(function()
                         if previousTarget then
+                            local newMax = math.clamp(GetSpeed(), 0, 72.5)
                             local targetDis = (previousTarget:GetModelCFrame().Position - hrp.Position).magnitude
 
-                            if targetDis <= maxDis / 5 then
+                            if targetDis <= newMax then
                                 bb_clashCount = bb_clashCount + 2
                                 task.wait(1)
                                 bb_clashCount = bb_clashCount - 2
