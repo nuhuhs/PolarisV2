@@ -67,7 +67,7 @@ local function BugBall()
         for i = 1, Amount do
             local random = tostring(math.random(0, 9));
 
-            local number = number .. random
+            number = number .. random
         end
 
         return tonumber(number)
