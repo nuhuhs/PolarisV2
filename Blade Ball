@@ -17,17 +17,17 @@ local vim = game:GetService('VirtualInputManager');
 
 local function RandomColor()
     local function r()
-        local r = math.random(1,255)
-        
+        local r = math.random(1, 255)
+
         return r;
     end
 
-    return Color3.fromRGB(r(),r(),r());
+    return Color3.fromRGB(r(), r(), r());
 end
 
 local function SetParryColor()
-    local r,g,b = RandomColor(),RandomColor(),RandomColor()
-    game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("ChangeSwordColor"):FireServer(r,g,b)
+    local r, g, b = RandomColor(), RandomColor(), RandomColor()
+    game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("ChangeSwordColor"):FireServer(r, g, b)
 end
 
 RunService.RenderStepped:Connect(SetParryColor)
@@ -57,6 +57,30 @@ function ParryAttempt()
     }
 
     game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("ParryAttempt"):FireServer(unpack(args))
+end
+
+local function BugBall()
+    local function GetPlayer()
+        for i, v in next, (game:GetService('Players'):GetPlayers()) do
+            if v ~= client and v.Character and v.Character:FindFirstChild('Head') and v.Character.Parent == workspace:FindFirstChild('Alive') then
+                return v.Character.HumanoidRootPart;
+            end
+        end
+    end
+
+    local args = {
+        [1] = .5,
+        [2] = hrp.CFrame,
+        [3] = {
+            [4651357447] = GetPlayer()
+        },
+        [4] = {
+            [1] = 960,
+            [2] = 504
+        }
+    }
+
+    game:GetService("ReplicatedStorage").Remotes.ParryAttempt:FireServer(unpack(args))
 end
 
 function Clash()
@@ -255,7 +279,14 @@ local autoParry = LSC1:AddToggle('autoParry', {
                 local maxDis = GetSpeed()
 
                 if dis <= maxDis then
-                    Parry()
+                    spawn(function()
+                        if not bb_bugBall then
+                            Parry()
+                        else
+                            BugBall()
+                        end
+                    end)
+
                     local oldTick = tick();
                     local newTick = tick();
                     spawn(function()
@@ -281,7 +312,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
                     repeat
                         wait()
                         newTick = tick()
-                    until not IsTarget() or (oldTick - newTick >= 1/60)
+                    until not IsTarget() or (oldTick - newTick >= 1 / 60)
                 end
             else
                 if GetTarget() and game:GetService('Players'):FindFirstChild(GetTarget()) then
@@ -289,6 +320,15 @@ local autoParry = LSC1:AddToggle('autoParry', {
                 end
             end
         end
+    end
+});
+
+local BugBall = LSC1:AddToggle('BugBall', {
+    Text = 'Explode Ball On Parry',
+    Default = false,
+
+    Callback = function(Value)
+        getgenv().bb_bugBall = Value
     end
 });
 
