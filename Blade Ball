@@ -273,26 +273,24 @@ local autoParry = LSC1:AddToggle('autoParry', {
                     spawn(function()
                         if previousTarget then
                             local pt = previousTarget;
-                            local targetDis = (pt:GetModelCFrame().Position - hrp.Position)
+                            local targetDis = (pt:GetModelCFrame().Position - hrp.Position);
+                            local added = 1;
 
-                            if targetDis <= maxDis then
-                                local added = 1;
-                                if targetDis <= 5 then
-                                    bb_clashCount = bb_clashCount + 3
-                                    added = 3
-                                elseif targetDis <= maxDis / 2 then
-                                    bb_clashCount = bb_clashCount + 2
-                                    added = 2
-                                else
-                                    bb_clashCount = bb_clashCount + 1
-                                    added = 1
-                                end
-
-                                spawn(function()
-                                    wait(.75)
-                                    bb_clashCount = bb_clashCount - added
-                                end)
+                            if targetDis <= 17.5 then
+                                bb_clashCount = bb_clashCount + 3
+                                added = 3
+                            elseif targetDis <= maxDis / 2 then
+                                bb_clashCount = bb_clashCount + 2
+                                added = 2
+                            elseif targetDis <= maxDis then
+                                bb_clashCount = bb_clashCount + 1
+                                added = 1
                             end
+
+                            spawn(function()
+                                wait(.75)
+                                bb_clashCount = bb_clashCount - added
+                            end)
                         end
                     end)
 
