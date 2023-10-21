@@ -214,7 +214,7 @@ local visualizeRange = RSC1:AddToggle('visualizeRange', {
                             Part.CFrame = hrp.CFrame;
                             Part.CanCollide = false;
                             Part.CastShadow = false;
-                            local s = math.clamp(GetSpeed(), 0, math.huge()) or 0;
+                            local s = math.clamp(GetSpeed(), 0, math.huge) or 0;
                             game:GetService('TweenService'):Create(Part,
                                 TweenInfo.new(.1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
                                 { Size = Vector3.new(s, s, s) }):Play();
