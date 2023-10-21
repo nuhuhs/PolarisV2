@@ -364,7 +364,7 @@ local autoPull = LSC2:AddToggle('autoPull', {
         while bb_autoPull do
             Heartbeat:Wait()
 
-            if not IsTarget() and game:GetService('Players'):FindFirstChild(GetTarget()) then
+            if GetTarget() and not IsTarget() and game:GetService('Players'):FindFirstChild(GetTarget()) then
                 local target = game:GetService('Players'):FindFirstChild(GetTarget()).Character
                 if target then
                     local dis = GetBallDis(target.PrimaryPart)
