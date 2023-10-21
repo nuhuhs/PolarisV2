@@ -289,7 +289,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
                     local newTick = tick();
                     spawn(function()
                         if previousTarget then
-                            getgenv().bb_newMax = GetSpeed() / 2
+                            local bb_newMax = GetSpeed() / 2
                             local targetDis = (previousTarget:GetModelCFrame().Position - hrp.Position).magnitude
 
                             if targetDis <= bb_newMax then
