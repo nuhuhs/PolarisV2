@@ -276,7 +276,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
                             local targetDis = (pt:GetModelCFrame().Position - hrp.Position).magnitude;
                             local added = 1;
 
-                            if targetDis <= 17.5 then
+                            if targetDis <= 15 then
                                 bb_clashCount = bb_clashCount + 3
                                 added = 3
                             elseif targetDis <= maxDis / 2 then
