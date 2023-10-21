@@ -279,10 +279,10 @@ local autoParry = LSC1:AddToggle('autoParry', {
                             if targetDis <= 15 then
                                 bb_clashCount = bb_clashCount + 3
                                 added = 3
-                            elseif targetDis <= maxDis / 2 then
+                            elseif targetDis <= math.clamp(maxDis, 0, 25) then
                                 bb_clashCount = bb_clashCount + 2
                                 added = 2
-                            elseif targetDis <= maxDis then
+                            elseif targetDis <= math.clamp(maxDis, 0, 40) then
                                 bb_clashCount = bb_clashCount + 1
                                 added = 1
                             end
