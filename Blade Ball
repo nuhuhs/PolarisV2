@@ -364,14 +364,15 @@ local autoPull = LSC2:AddToggle('autoPull', {
         while bb_autoPull do
             Heartbeat:Wait()
 
-            if not IsTarget() then
-                local target = GetTarget()
+            if not IsTarget() and game:GetService('Players'):FindFirstChild(GetTarget()) then
+                local target = game:GetService('Players'):FindFirstChild(GetTarget()).Character
+                if target then
+                    local dis = GetBallDis(target.PrimaryPart)
+                    local maxDis = GetSpeed()
 
-                local dis = GetBallDis(target.PrimaryPart)
-                local maxDis = GetSpeed()
-
-                if dis <= maxDis then
-                    game:GetService("ReplicatedStorage").Remotes.AbilityButtonPress:Fire()
+                    if dis <= maxDis then
+                        game:GetService("ReplicatedStorage").Remotes.AbilityButtonPress:Fire()
+                    end
                 end
             end
         end
