@@ -71,6 +71,7 @@ end
 
 local Main = Window:AddTab('Main');
 local LSC1 = Main:AddLeftGroupbox("Auto");
+local LSC2 = Main:AddLeftGroupbox("Abilities");
 local RSC1 = Main:AddRightGroupbox("Visual");
 local RSC2 = Main:AddRightGroupbox("Laggy");
 
@@ -97,8 +98,8 @@ local function GetBalls()
     local real;
     local fake;
 
-    for _, v in pairs(workspace.Balls:GetChildren()) do
-        if v:GetAttribute('realBall') or (v:GetAttribute('target') and v:GetAttribute('target') ~= '') then
+    for _, v in next, (workspace.Balls:GetChildren()) do
+        if (v:GetAttribute('realBall')) or (not v.Anchored) then
             real = v
         else
             fake = v
@@ -130,11 +131,12 @@ local function GetSpeed()
     if returnValue == 0 then
         return 0;
     else
-        return math.clamp(returnValue / 4, 12.5, 125);
+        return math.clamp(returnValue / 5, 20, 125);
     end
 end
 
-local function GetParryDis()
+local function GetBallDis(targetPart)
+    local targetPart = targetPart or hrp
     local returnValue = 0;
 
     local balls = GetBalls()
@@ -144,8 +146,8 @@ local function GetParryDis()
 
     local speed = GetSpeed()
 
-    if b1 and b2 and hrp and speed then
-        returnValue = (b2.Position - hrp.Position).magnitude
+    if b1 and b2 and targetPart and speed then
+        returnValue = (b2.Position - targetPart.Position).magnitude
     end
 
     return returnValue;
@@ -212,7 +214,7 @@ local visualizeRange = RSC1:AddToggle('visualizeRange', {
                             Part.CFrame = hrp.CFrame;
                             Part.CanCollide = false;
                             Part.CastShadow = false;
-                            local s = math.clamp(GetSpeed(), 0, 72.5) or 0;
+                            local s = math.clamp(GetSpeed(), 0, math.huge()) or 0;
                             game:GetService('TweenService'):Create(Part,
                                 TweenInfo.new(.1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
                                 { Size = Vector3.new(s, s, s) }):Play();
@@ -255,7 +257,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
             Heartbeat:Wait()
 
             if IsTarget() then
-                local dis = GetParryDis()
+                local dis = GetBallDis()
                 local maxDis = GetSpeed()
 
                 if dis <= maxDis then
@@ -326,24 +328,52 @@ local manualClash = LSC1:AddToggle('manualClash', {
     end
 });
 
-local uis = game:GetService('UserInputService');
-local IsHolding = false;
+task.spawn(function()
+    local uis = game:GetService('UserInputService');
+    local IsHolding = false;
 
-uis.InputBegan:Connect(function(input, IsTyping)
-    if not IsTyping and input.KeyCode == Enum.KeyCode.E then
-        IsHolding = true;
+    uis.InputBegan:Connect(function(input, IsTyping)
+        if not IsTyping and input.KeyCode == Enum.KeyCode.E then
+            IsHolding = true;
 
-        while IsHolding and bb_manualClash do
+            while IsHolding and bb_manualClash do
+                Heartbeat:Wait()
+                spawn(function()
+                    Clash()
+                end)
+            end
+        end
+    end)
+
+    uis.InputEnded:Connect(function(input, IsTyping)
+        if not IsTyping and input.KeyCode == Enum.KeyCode.E then
+            IsHolding = false;
+        end
+    end)
+end)
+
+LSC2:AddLabel('|| Equip Correct Ability ||')
+
+local autoPull = LSC2:AddToggle('autoPull', {
+    Text = 'Auto Pull',
+    Default = false,
+
+    Callback = function(Value)
+        getgenv().bb_autoPull = Value
+
+        while bb_autoPull do
             Heartbeat:Wait()
-            spawn(function()
-                Clash()
-            end)
+
+            if not IsTarget() then
+                local target = GetTarget()
+
+                local dis = GetBallDis(target.PrimaryPart)
+                local maxDis = GetSpeed()
+
+                if dis <= maxDis then
+                    game:GetService("ReplicatedStorage").Remotes.AbilityButtonPress:Fire()
+                end
+            end
         end
     end
-end)
-
-uis.InputEnded:Connect(function(input, IsTyping)
-    if not IsTyping and input.KeyCode == Enum.KeyCode.E then
-        IsHolding = false;
-    end
-end)
+});
