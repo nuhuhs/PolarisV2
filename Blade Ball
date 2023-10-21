@@ -131,7 +131,7 @@ local function GetSpeed()
     if returnValue == 0 then
         return 0;
     else
-        return math.clamp(returnValue / 5, 25, 125);
+        return math.clamp(returnValue / 5, 12.5, 125);
     end
 end
 
@@ -266,7 +266,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
                     local newTick = tick();
                     spawn(function()
                         if previousTarget then
-                            local newMax = math.clamp(GetSpeed() / 2, 0, 50)
+                            local newMax = math.clamp(GetSpeed() / 5, 0, 25)
                             local targetDis = (previousTarget:GetModelCFrame().Position - hrp.Position).magnitude
 
                             if targetDis <= newMax then
