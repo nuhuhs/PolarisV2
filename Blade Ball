@@ -220,7 +220,7 @@ local visualizeRange = RSC1:AddToggle('visualizeRange', {
                             else
                                 s = math.clamp(GetSpeed(), 25, math.huge);
                             end
-                            
+
                             game:GetService('TweenService'):Create(Part,
                                 TweenInfo.new(.1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
                                 { Size = Vector3.new(s, s, s) }):Play();
@@ -272,22 +272,27 @@ local autoParry = LSC1:AddToggle('autoParry', {
                     local newTick = tick();
                     spawn(function()
                         if previousTarget then
-                            local newMax = math.clamp(GetSpeed() / 5, 0, 25)
-                            local targetDis = (previousTarget:GetModelCFrame().Position - hrp.Position).magnitude
+                            local pt = previousTarget;
+                            local targetDis = (pt:GetModelCFrame().Position - hrp.Position)
 
-                            if targetDis <= newMax then
-                                bb_clashCount = bb_clashCount + 2
-                                task.wait(1)
-                                bb_clashCount = bb_clashCount - 2
-                            else
-                                bb_clashCount = bb_clashCount + 1
-                                task.wait(1)
-                                bb_clashCount = bb_clashCount - 1
+                            if targetDis <= maxDis then
+                                local added = 1;
+                                if targetDis <= 5 then
+                                    bb_clashCount = bb_clashCount + 3
+                                    added = 3
+                                elseif targetDis <= maxDis / 2 then
+                                    bb_clashCount = bb_clashCount + 2
+                                    added = 2
+                                else
+                                    bb_clashCount = bb_clashCount + 1
+                                    added = 1
+                                end
+
+                                spawn(function()
+                                    wait(.75)
+                                    bb_clashCount = bb_clashCount - added
+                                end)
                             end
-                        else
-                            bb_clashCount = bb_clashCount + 1
-                            task.wait(1)
-                            bb_clashCount = bb_clashCount - 1
                         end
                     end)
 
