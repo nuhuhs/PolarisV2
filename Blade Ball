@@ -177,6 +177,7 @@ local function IsTarget()
 end
 
 local Part;
+local Part2;
 
 local function GetClashColor()
     local clash = bb_clashCount
@@ -205,6 +206,11 @@ local visualizeRange = RSC1:AddToggle('visualizeRange', {
             Part.Shape = Enum.PartType.Ball
             Part.Material = Enum.Material.ForceField
             Part.Transparency = .2
+            Part2 = Instance.new('Part')
+            Part2.Parent = workspace
+            Part2.Shape = Enum.PartType.Ball
+            Part2.Material = Enum.Material.ForceField
+            Part2.Transparency = .8
             spawn(function()
                 local connection;
 
@@ -214,16 +220,27 @@ local visualizeRange = RSC1:AddToggle('visualizeRange', {
                             Part.CFrame = hrp.CFrame;
                             Part.CanCollide = false;
                             Part.CastShadow = false;
+                            Part2.CFrame = hrp.CFrame;
+                            Part2.CanCollide = false;
+                            Part2.CastShadow = false;
+                            Part2.Color = Color3.fromRGB(255, 0, 0)
                             local s = GetSpeed() or 0;
+                            local s2 = GetSpeed() or 0;
                             if s == 0 then
                                 s = 0;
+                                s2 = 0;
                             else
                                 s = math.clamp(GetSpeed(), 25, math.huge);
+                                s2 = GetSpeed() / 2;
                             end
 
                             game:GetService('TweenService'):Create(Part,
                                 TweenInfo.new(.1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
                                 { Size = Vector3.new(s, s, s) }):Play();
+
+                            game:GetService('TweenService'):Create(Part2,
+                                TweenInfo.new(.1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
+                                { Size = Vector3.new(s2, s2, s2) }):Play();
 
                             local color = GetClashColor()
 
@@ -272,10 +289,10 @@ local autoParry = LSC1:AddToggle('autoParry', {
                     local newTick = tick();
                     spawn(function()
                         if previousTarget then
-                            local newMax = math.clamp(GetSpeed() / 5, 0, 25)
+                            getgenv().bb_newMax = GetSpeed() / 2
                             local targetDis = (previousTarget:GetModelCFrame().Position - hrp.Position).magnitude
 
-                            if targetDis <= newMax then
+                            if targetDis <= bb_newMax then
                                 bb_clashCount = bb_clashCount + 2
                                 task.wait(1)
                                 bb_clashCount = bb_clashCount - 2
