@@ -131,7 +131,7 @@ local function GetSpeed()
     if returnValue == 0 then
         return 0;
     else
-        return math.clamp(returnValue / 4, 25, 125);
+        return math.clamp(returnValue / 4, 12.5, 125);
     end
 end
 
@@ -214,7 +214,13 @@ local visualizeRange = RSC1:AddToggle('visualizeRange', {
                             Part.CFrame = hrp.CFrame;
                             Part.CanCollide = false;
                             Part.CastShadow = false;
-                            local s = math.clamp(GetSpeed(), 0, math.huge) or 0;
+                            local s = GetSpeed() or 0;
+                            if s == 0 then
+                                s = 0;
+                            else
+                                s = math.clamp(GetSpeed(), 25, math.huge);
+                            end
+                            
                             game:GetService('TweenService'):Create(Part,
                                 TweenInfo.new(.1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
                                 { Size = Vector3.new(s, s, s) }):Play();
@@ -367,11 +373,9 @@ local autoPull = LSC2:AddToggle('autoPull', {
             if GetTarget() and not IsTarget() and game:GetService('Players'):FindFirstChild(GetTarget()) then
                 local target = game:GetService('Players'):FindFirstChild(GetTarget()).Character
                 if target then
-                    local dis = GetBallDis(target.PrimaryPart)
-                    local maxDis = GetSpeed()
-
-                    if dis <= maxDis then
+                    if target:FindFirstChild('ParryHighlight') then
                         game:GetService("ReplicatedStorage").Remotes.AbilityButtonPress:Fire()
+                        game:GetService('Workspace').CurrentCamera.CFrame = CFrame.lookAt(hrp.Position, target:GetModelCFrame().Position)
                     end
                 end
             end
