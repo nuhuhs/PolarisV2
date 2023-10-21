@@ -25,9 +25,13 @@ local function RandomColor()
     return Color3.fromRGB(r(), r(), r());
 end
 
+getgenv().rainbowParry = true;
+
 local function SetParryColor()
-    local r, g, b = RandomColor(), RandomColor(), RandomColor()
-    game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("ChangeSwordColor"):FireServer(r, g, b)
+    if rainbowParry then
+        local r, g, b = RandomColor(), RandomColor(), RandomColor()
+        game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("ChangeSwordColor"):FireServer(r, g, b)
+    end
 end
 
 RunService.RenderStepped:Connect(SetParryColor)
@@ -266,6 +270,19 @@ local visualizeRange = RSC1:AddToggle('visualizeRange', {
         end
     end
 });
+
+RSC1:AddDivider()
+
+local rainbowParry = RSC1:AddToggle('rainbowParry', {
+    Text = 'Rainbow Block Color',
+    Tooltip = 'Server-Sided',
+    Default = true,
+
+    Callback = function(Value)
+        getgenv().rainbowParry = Value;
+    end
+});
+
 
 local TargetChanged = false;
 
