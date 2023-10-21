@@ -231,7 +231,7 @@ local visualizeRange = RSC1:AddToggle('visualizeRange', {
                                 s2 = 0;
                             else
                                 s = math.clamp(GetSpeed(), 25, math.huge);
-                                s2 = GetSpeed() / 2;
+                                s2 = math.clamp(GetSpeed() / 2, 12.5, math.huge);
                             end
 
                             game:GetService('TweenService'):Create(Part,
