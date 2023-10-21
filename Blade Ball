@@ -273,7 +273,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
                     spawn(function()
                         if previousTarget then
                             local pt = previousTarget;
-                            local targetDis = (pt:GetModelCFrame().Position - hrp.Position);
+                            local targetDis = (pt:GetModelCFrame().Position - hrp.Position).magnitude;
                             local added = 1;
 
                             if targetDis <= 17.5 then
