@@ -267,7 +267,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
                 local maxDis = GetSpeed()
 
                 if dis <= maxDis then
-                    Parry()
+                    ParryAttempt()
                     local oldTick = tick();
                     local newTick = tick();
                     spawn(function()
