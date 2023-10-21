@@ -375,7 +375,6 @@ local autoPull = LSC2:AddToggle('autoPull', {
                 if target then
                     if target:FindFirstChild('ParryHighlight') then
                         game:GetService("ReplicatedStorage").Remotes.AbilityButtonPress:Fire()
-                        game:GetService('Workspace').CurrentCamera.CFrame = CFrame.lookAt(hrp.Position, target:GetModelCFrame().Position)
                     end
                 end
             end
