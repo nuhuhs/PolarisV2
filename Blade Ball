@@ -44,11 +44,11 @@ function Parry()
     game:GetService("ReplicatedStorage").Remotes.ParryButtonPress:Fire()
 end
 
-function ParryAttempt()
-    spawn(function()
-        local PlayerArray = {};
+local PlayerArray = {};
 
-
+spawn(function()
+    while true do
+        PlayerArray = {};
         for i, v in pairs(game:GetService('Players'):GetPlayers()) do
             cc = workspace:FindFirstChild('Camera');
             if v.UserId and v.Character and v.Character.PrimaryPart and cc then
@@ -59,7 +59,12 @@ function ParryAttempt()
                 PlayerArray[id] = screenPos;
             end
         end
+        wait(1)
+    end
+end)
 
+function ParryAttempt()
+    spawn(function()
         game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("ParryAttempt"):FireServer(0.5,
             cc.CFrame,
             PlayerArray, { 960, 480 })
@@ -68,9 +73,7 @@ end
 
 function Clash()
     spawn(function()
-        spawn(function()
-            ParryAttempt()
-        end)
+        ParryAttempt()
     end)
 end
 
@@ -153,7 +156,7 @@ local function GetSpeed()
         local spY = string.gsub(tostring(speed.Y), '-', '')
         spY = tonumber(spY)
 
-        returnValue = (spX + spZ + (spY / 2));
+        returnValue = (spX + spZ + spY);
     end
 
     if returnValue == 0 then
@@ -338,8 +341,8 @@ local autoParry = LSC1:AddToggle('autoParry', {
                         end
                     end)
 
-
                     ParryAttempt()
+
                     repeat
                         Heartbeat:Wait()
                         newTick = tick()
