@@ -49,7 +49,7 @@ function ParryAttempt()
 
     for i, v in pairs(game:GetService('Players'):GetPlayers()) do
         cc = workspace:FindFirstChild('Camera');
-        if v.UserId and v.Character and cc then
+        if v.UserId and v.Character and v.Character.PrimaryPart and cc then
             local id = v.UserId;
             local char = v.Character;
             local screenPos = cc:WorldToViewportPoint(char.PrimaryPart.Position);
