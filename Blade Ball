@@ -1,5 +1,7 @@
 -- Blade Ball
 
+print('11')
+
 local workspace = game:GetService('Workspace');
 local cc = workspace:FindFirstChild('Camera');
 
