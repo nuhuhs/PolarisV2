@@ -318,6 +318,9 @@ local autoParry = LSC1:AddToggle('autoParry', {
                             elseif dis <= math.clamp(speed / 2, 30, 60) then
                                 bb_clashCount = bb_clashCount + 1;
                                 added = 1;
+                            else
+                                bb_clashCount = bb_clashCount + .5;
+                                added = .5;
                             end
 
                             spawn(function()
