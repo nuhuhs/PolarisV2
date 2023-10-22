@@ -78,6 +78,7 @@ local RSC1 = Main:AddRightGroupbox("Visual");
 local RSC2 = Main:AddRightGroupbox("Laggy");
 local RSC3 = Main:AddRightGroupbox("Ranked");
 
+--[[
 local autoQueue = RSC3:AddToggle('autoQueue', {
     Text = 'Auto Replay Ranked (solo only)',
     Default = false,
@@ -96,6 +97,8 @@ local autoQueue = RSC3:AddToggle('autoQueue', {
         end
     end
 });
+]]
+
 
 local iced_bb = RSC2:AddButton({
     Text = 'Is this ice?',
@@ -304,8 +307,8 @@ local autoParry = LSC1:AddToggle('autoParry', {
                     local newTick = tick();
 
                     spawn(function()
-                        if previousTarget then
-                            local dis = (previousTarget:GetModelCFrame().Position - hrp.Position).magnitude;
+                        if previousTarget and previousTarget.PrimaryPart and previousTarget ~= char then
+                            local dis = (previousTarget.PrimaryPart.Position - hrp.Position).magnitude;
                             local speed = GetSpeed();
                             local added = 0;
 
