@@ -76,6 +76,26 @@ local LSC1 = Main:AddLeftGroupbox("Auto");
 local LSC2 = Main:AddLeftGroupbox("Abilities");
 local RSC1 = Main:AddRightGroupbox("Visual");
 local RSC2 = Main:AddRightGroupbox("Laggy");
+local RSC3 = Main:AddRightGroupbox("Ranked");
+
+local autoQueue = RSC3:AddToggle('autoQueue', {
+    Text = 'Auto Replay Ranked (solo only)',
+    Default = false,
+
+    Callback = function(Value)
+        getgenv().autoQueue = Value
+
+        while autoQueue do
+            local plrGui = client.PlayerGui
+            if plrGui:FindFirstChild('VictoryScreen') and plrGui:FindFirstChild('VictoryScreen'):FindFirstChild('PlayButton') then
+                firesignal(game:GetService("Players").LocalPlayer.PlayerGui.VictoryScreen.PlayButton.MouseButton1Press)
+            else
+                Library:Notify('Use in a SOLO Ranked Game !')
+            end
+            task.wait(1)
+        end
+    end
+});
 
 local iced_bb = RSC2:AddButton({
     Text = 'Is this ice?',
