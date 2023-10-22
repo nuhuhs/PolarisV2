@@ -6,13 +6,6 @@ local cc = workspace:FindFirstChild('Camera');
 local abilities = {}
 getgenv().bb_clashCount = 0;
 
-if char:FindFirstChild('Abilities') then
-    for i, v in pairs(char:FindFirstChild('Abilities'):GetChildren()) do
-        print(v.Name)
-        table.insert(abilities, v.Name)
-    end
-end
-
 SaveManager:SetFolder('Polaris/' .. client.Name .. 'BladeBall')
 getgenv().folderSet = true
 
@@ -299,7 +292,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
                             if dis <= math.clamp(speed / 4, 5, 20) then
                                 bb_clashCount = bb_clashCount + 3;
                                 added = 3;
-                            elseif dis <= math.clamp(speed / 2, 10, 40) then
+                            elseif dis <= math.clamp(speed / 2, 25, 50) then
                                 bb_clashCount = bb_clashCount + 1;
                                 added = 1;
                             end
