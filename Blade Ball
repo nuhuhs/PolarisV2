@@ -1,7 +1,7 @@
 -- Blade Ball
 
-local workspace = game:GetService('Workspace')
-local cc = workspace.CurrentCamera
+local workspace = game:GetService('Workspace');
+local cc = workspace:FindFirstChild('Camera');
 
 local abilities = {}
 getgenv().bb_clashCount = 0;
@@ -392,10 +392,10 @@ local autoPull = LSC2:AddToggle('autoPull', {
 
             if GetTarget() and not IsTarget() and game:GetService('Players'):FindFirstChild(GetTarget()) then
                 local target = game:GetService('Players'):FindFirstChild(GetTarget()).Character
-                if target then
-                    if target:FindFirstChild('ParryHighlight') then
-                        game:GetService("ReplicatedStorage").Remotes.AbilityButtonPress:Fire()
-                    end
+                local dis = (target:GetModelCFrame().Position - hrp.Position).Magnitude
+
+                if dis <= 50 then
+                    game:GetService("ReplicatedStorage").Remotes.AbilityButtonPress:Fire()
                 end
             end
         end
