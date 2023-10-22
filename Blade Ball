@@ -140,7 +140,7 @@ local function GetSpeed()
     if returnValue == 0 then
         return 0;
     else
-        return math.clamp(returnValue / 3, 15, 125);
+        return math.clamp(returnValue / 5, 15, 125);
     end
 end
 
@@ -223,6 +223,7 @@ local visualizeRange = RSC1:AddToggle('visualizeRange', {
                             Part.CFrame = hrp.CFrame;
                             Part.CanCollide = false;
                             Part.CastShadow = false;
+                            s = GetSpeed()
                             if s == 0 then
                                 s = 0;
                             else
@@ -302,7 +303,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
                                 bb_clashCount = bb_clashCount + 1;
                                 added = 1;
                             end
-                            
+
                             spawn(function()
                                 wait(.75);
                                 bb_clashCount = bb_clashCount - added;
