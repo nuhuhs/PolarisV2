@@ -310,10 +310,12 @@ local autoParry = LSC1:AddToggle('autoParry', {
                             local dis = (previousTarget.PrimaryPart.Position - hrp.Position).magnitude;
                             local speed = GetSpeed();
                             local added = 0;
+                            local waitTime = .75
 
                             if dis <= math.clamp(speed / 4, 15, 30) then
-                                bb_clashCount = bb_clashCount + 3;
-                                added = 3;
+                                bb_clashCount = bb_clashCount + 2;
+                                added = 2;
+                                waitTime = .5;
                             elseif dis <= math.clamp(speed / 2, 30, 60) then
                                 bb_clashCount = bb_clashCount + 1;
                                 added = 1;
@@ -323,7 +325,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
                             end
 
                             spawn(function()
-                                wait(.75);
+                                wait(waitTime);
                                 bb_clashCount = bb_clashCount - added;
                             end)
                         end
