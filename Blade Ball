@@ -245,11 +245,11 @@ local visualizeRange = RSC1:AddToggle('visualizeRange', {
                             Part.CFrame = hrp.CFrame;
                             Part.CanCollide = false;
                             Part.CastShadow = false;
-                            s = GetSpeed()
+                            local s = GetSpeed()
                             if s == 0 then
                                 s = 0;
                             else
-                                s = math.clamp(GetSpeed(), 25, math.huge);
+                                s = math.clamp(GetSpeed(), 15, math.huge);
                             end
 
                             game:GetService('TweenService'):Create(Part,
