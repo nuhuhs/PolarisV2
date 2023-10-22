@@ -153,7 +153,7 @@ local function GetSpeed()
     if returnValue == 0 then
         return 0;
     else
-        return math.clamp(returnValue / 3.5, 15, 125);
+        return math.clamp(returnValue / 3, 15, 125);
     end
 end
 
@@ -309,10 +309,10 @@ local autoParry = LSC1:AddToggle('autoParry', {
                             local speed = GetSpeed();
                             local added = 0;
 
-                            if dis <= math.clamp(speed / 4, 5, 20) then
+                            if dis <= math.clamp(speed / 4, 15, 30) then
                                 bb_clashCount = bb_clashCount + 3;
                                 added = 3;
-                            elseif dis <= math.clamp(speed / 2, 25, 50) then
+                            elseif dis <= math.clamp(speed / 2, 30, 60) then
                                 bb_clashCount = bb_clashCount + 1;
                                 added = 1;
                             end
