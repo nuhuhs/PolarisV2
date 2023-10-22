@@ -25,7 +25,7 @@ local function RandomColor()
     return Color3.fromRGB(r(), r(), r());
 end
 
-getgenv().rainbowParry = true;
+getgenv().rainbowParry = false;
 
 local function SetParryColor()
     if rainbowParry then
@@ -276,7 +276,7 @@ RSC1:AddDivider()
 local rainbowParry = RSC1:AddToggle('rainbowParry', {
     Text = 'Rainbow Block Color',
     Tooltip = 'Server-Sided',
-    Default = true,
+    Default = false,
 
     Callback = function(Value)
         getgenv().rainbowParry = Value;
