@@ -88,7 +88,7 @@ local autoQueue = RSC3:AddToggle('autoQueue', {
         while autoQueue do
             local plrGui = client.PlayerGui
             if plrGui:FindFirstChild('VictoryScreen') and plrGui:FindFirstChild('VictoryScreen'):FindFirstChild('PlayButton') then
-                firesignal(game:GetService("Players").LocalPlayer.PlayerGui.VictoryScreen.PlayButton.MouseButton1Press)
+                firesignal(game:GetService("Players").LocalPlayer.PlayerGui.VictoryScreen.PlayButton.MouseButton1Click)
             else
                 Library:Notify('Use in a SOLO Ranked Game !')
             end
