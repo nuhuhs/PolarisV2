@@ -45,21 +45,25 @@ function Parry()
 end
 
 function ParryAttempt()
-    local PlayerArray = {};
+    spawn(function()
+        local PlayerArray = {};
 
-    for i, v in pairs(game:GetService('Players'):GetPlayers()) do
-        cc = workspace:FindFirstChild('Camera');
-        if v.UserId and v.Character and v.Character.PrimaryPart and cc then
-            local id = v.UserId;
-            local char = v.Character;
-            local screenPos = cc:WorldToViewportPoint(char.PrimaryPart.Position);
 
-            PlayerArray[id] = screenPos;
+        for i, v in pairs(game:GetService('Players'):GetPlayers()) do
+            cc = workspace:FindFirstChild('Camera');
+            if v.UserId and v.Character and v.Character.PrimaryPart and cc then
+                local id = v.UserId;
+                local char = v.Character;
+                local screenPos = cc:WorldToViewportPoint(char.PrimaryPart.Position);
+
+                PlayerArray[id] = screenPos;
+            end
         end
-    end
 
-    game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("ParryAttempt"):FireServer(0.5, cc.CFrame,
-        PlayerArray, { 960, 480 })
+        game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("ParryAttempt"):FireServer(0.5,
+            cc.CFrame,
+            PlayerArray, { 960, 480 })
+    end)
 end
 
 function Clash()
