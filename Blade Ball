@@ -70,12 +70,10 @@ end
 
 function Clash()
     spawn(function()
-        for i = 1, 100 do
-            spawn(function()
-                ParryAttempt()
-                Parry()
-            end)
-        end
+        spawn(function()
+            ParryAttempt()
+            Parry()
+        end)
     end)
 end
 
