@@ -1,12 +1,17 @@
 -- Blade Ball
 
-print('11')
-
 local workspace = game:GetService('Workspace');
 local cc = workspace:FindFirstChild('Camera');
 
 local abilities = {}
 getgenv().bb_clashCount = 0;
+
+if char:FindFirstChild('Abilities') then
+    for i, v in pairs(char:FindFirstChild('Abilities'):GetChildren()) do
+        print(v.Name)
+        table.insert(abilities, v.Name)
+    end
+end
 
 SaveManager:SetFolder('Polaris/' .. client.Name .. 'BladeBall')
 getgenv().folderSet = true
@@ -287,7 +292,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
                     spawn(function()
                         if previousTarget then
                             local dis = (previousTarget:GetModelCFrame().Position - hrp.Position).magnitude
-                            local added = 1;
+                            local added = 0;
 
                             if dis <= 25 then
                                 bb_clashCount = bb_clashCount + 3;
