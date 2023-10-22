@@ -70,7 +70,7 @@ end
 
 function Clash()
     spawn(function()
-        for i = 1, 5 do
+        for i = 1, 100 do
             spawn(function()
                 ParryAttempt()
                 Parry()
@@ -293,7 +293,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
                     local oldTick = tick();
                     local newTick = tick();
 
-                    spawn(function() 
+                    spawn(function()
                         if previousTarget then
                             local dis = (previousTarget:GetModelCFrame().Position - hrp.Position).magnitude
                             local added = 1;
