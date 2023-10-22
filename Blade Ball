@@ -6,13 +6,6 @@ local cc = workspace:FindFirstChild('Camera');
 local abilities = {}
 getgenv().bb_clashCount = 0;
 
-if char:FindFirstChild('Abilities') then
-    for i, v in pairs(char:FindFirstChild('Abilities'):GetChildren()) do
-        print(v.Name)
-        table.insert(abilities, v.Name)
-    end
-end
-
 SaveManager:SetFolder('Polaris/' .. client.Name .. 'BladeBall')
 getgenv().folderSet = true
 
@@ -55,7 +48,8 @@ function ParryAttempt()
     local PlayerArray = {};
 
     for i, v in pairs(game:GetService('Players'):GetPlayers()) do
-        if v.UserId and v.Character then
+        cc = workspace:FindFirstChild('Camera');
+        if v.UserId and v.Character and cc then
             local id = v.UserId;
             local char = v.Character;
             local screenPos = cc:WorldToViewportPoint(char.PrimaryPart.Position);
@@ -269,9 +263,6 @@ local rainbowParry = RSC1:AddToggle('rainbowParry', {
     end
 });
 
-
-local TargetChanged = false;
-
 local autoParry = LSC1:AddToggle('autoParry', {
     Text = 'Auto Parry',
     Default = false,
@@ -303,6 +294,8 @@ local autoParry = LSC1:AddToggle('autoParry', {
                                 bb_clashCount = bb_clashCount + 1;
                                 added = 1;
                             end
+
+                            print(bb_clashCount)
 
                             spawn(function()
                                 wait(.75);
@@ -391,11 +384,14 @@ local autoPull = LSC2:AddToggle('autoPull', {
             Heartbeat:Wait()
 
             if GetTarget() and not IsTarget() and game:GetService('Players'):FindFirstChild(GetTarget()) then
-                local target = game:GetService('Players'):FindFirstChild(GetTarget()).Character
-                local dis = (target:GetModelCFrame().Position - hrp.Position).Magnitude
+                local target = game:GetService('Players'):FindFirstChild(GetTarget()).Character;
+                local ball = GetBalls()[1]
+                if ball then
+                    local dis = (target:GetModelCFrame().Position - ball.Position).Magnitude;
 
-                if dis <= 50 then
-                    game:GetService("ReplicatedStorage").Remotes.AbilityButtonPress:Fire()
+                    if dis <= 50 then
+                        game:GetService("ReplicatedStorage").Remotes.AbilityButtonPress:Fire()
+                    end
                 end
             end
         end
