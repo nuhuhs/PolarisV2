@@ -162,7 +162,7 @@ local function GetSpeed()
     if returnValue == 0 then
         return 0;
     else
-        return math.clamp(returnValue / 3, 15, 250);
+        return math.clamp(returnValue / 3, 15, 125);
     end
 end
 
@@ -305,7 +305,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
 
             if IsTarget() then
                 local dis = GetBallDis()
-                local maxDis = math.clamp(GetSpeed() / 2, 15, 125)
+                local maxDis = GetSpeed()
 
                 if dis <= maxDis then
                     local oldTick = tick();
@@ -321,7 +321,7 @@ local autoParry = LSC1:AddToggle('autoParry', {
 
                             if dis <= math.clamp(speed / 4, 15, 30) then
                                 bb_clashCount = bb_clashCount + 3;
-                                added = 3;
+                                added = 2;
                             elseif dis <= math.clamp(speed / 3, 20, 40) then
                                 bb_clashCount = bb_clashCount + 2;
                                 added = 2;
