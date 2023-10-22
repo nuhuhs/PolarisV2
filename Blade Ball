@@ -291,19 +291,18 @@ local autoParry = LSC1:AddToggle('autoParry', {
 
                     spawn(function()
                         if previousTarget then
-                            local dis = (previousTarget:GetModelCFrame().Position - hrp.Position).magnitude
+                            local dis = (previousTarget:GetModelCFrame().Position - hrp.Position).magnitude;
+                            local speed = GetSpeed();
                             local added = 0;
 
-                            if dis <= 25 then
+                            if dis <= math.clamp(speed / 4, 5, 20) then
                                 bb_clashCount = bb_clashCount + 3;
                                 added = 3;
-                            elseif dis <= 50 then
+                            elseif dis <= math.clamp(speed / 2, 10, 40) then
                                 bb_clashCount = bb_clashCount + 1;
                                 added = 1;
                             end
-
-                            print(bb_clashCount)
-
+                            
                             spawn(function()
                                 wait(.75);
                                 bb_clashCount = bb_clashCount - added;
