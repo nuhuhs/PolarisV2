@@ -133,7 +133,7 @@ local function GetSpeed()
     if returnValue == 0 then
         return 0;
     else
-        return math.clamp(returnValue / 5, 15, 125);
+        return math.clamp(returnValue / 3.5, 15, 125);
     end
 end
 
