@@ -2,7 +2,7 @@
 
 repeat wait() until game:IsLoaded() and game.Players.LocalPlayer.Character
 
-print('Polaris V2'.. 'Test Script Loaded!')
+print('Polaris V2'.. ' Test Script Loaded!')
 
 -- Client
 
